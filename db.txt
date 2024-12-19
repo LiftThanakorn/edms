@@ -1,0 +1,154 @@
+
+CREATE TABLE edms_users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,    -- รหัสผู้ใช้
+    username VARCHAR(255) NOT NULL UNIQUE,     -- ชื่อผู้ใช้ (ไม่ซ้ำ)
+    password VARCHAR(255) NOT NULL,            -- รหัสผ่าน (เก็บแบบ hash)
+    first_name VARCHAR(255) NOT NULL,          -- ชื่อ
+    last_name VARCHAR(255) NOT NULL,           -- นามสกุล
+    email VARCHAR(255),                        -- อีเมล์ (สามารถเป็น NULL ได้)
+    role ENUM('admin', 'user') NOT NULL,       -- สิทธิ์การเข้าถึง (มีแค่ admin และ user)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- เวลาที่สร้างบัญชี
+);
+
+-- สร้างตาราง edms_work_categories
+CREATE TABLE edms_work_categories (
+    category_id INT AUTO_INCREMENT PRIMARY KEY,    -- รหัสหมวดหมู่งาน
+    category_name VARCHAR(255) NOT NULL,            -- ชื่อหมวดหมู่งาน
+    description TEXT,                               -- รายละเอียดของหมวดหมู่งาน (สามารถเป็น NULL ได้)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- เวลาที่สร้างหมวดหมู่งาน
+);
+
+-- สร้างตาราง edms_internal_in_documents
+CREATE TABLE edms_internal_in_documents (
+    document_id INT AUTO_INCREMENT PRIMARY KEY,  
+    document_number VARCHAR(20) NOT NULL COMMENT 'เลขทะเบียนรับ', -- เลขทะเบียนรับ
+    document_year YEAR NOT NULL COMMENT 'ปีของหนังสือ', -- ปีของหนังสือ
+    document_reference_number VARCHAR(50) UNIQUE NOT NULL COMMENT 'เลขที่หนังสือ', -- เลขที่หนังสือ
+    title VARCHAR(255) NOT NULL COMMENT 'ชื่อเรื่อง', -- ชื่อเรื่อง
+    sender VARCHAR(255) NOT NULL COMMENT 'ผู้ส่ง', -- ผู้ส่ง
+    receiver VARCHAR(255) DEFAULT NULL COMMENT 'ผู้รับ', -- ผู้รับ (สามารถเป็น NULL ได้)
+    date_received DATE NOT NULL COMMENT 'วันที่รับ', -- วันที่รับ
+    attachment_path VARCHAR(255) DEFAULT NULL COMMENT 'ไฟล์แนบ', -- ไฟล์แนบ
+    note TEXT,                             -- หมายเหตุ
+    category_id INT DEFAULT NULL COMMENT 'หมวดหมู่งาน', -- หมวดหมู่งาน (FK ไปยังตาราง edms_work_categories)
+    created_by INT NOT NULL COMMENT 'ผู้สร้าง', -- ผู้สร้าง (FK ไปยังตาราง edms_users)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'เวลาที่สร้างเอกสาร', -- เวลาที่สร้างเอกสาร
+    date_signed DATE DEFAULT NULL COMMENT 'ลงวันที่', -- ลงวันที่เอกสาร
+    FOREIGN KEY (category_id) REFERENCES edms_work_categories(category_id) ON DELETE SET NULL, -- เชื่อมโยงกับตาราง edms_work_categories
+    FOREIGN KEY (created_by) REFERENCES edms_users(user_id) ON DELETE CASCADE -- เชื่อมโยงกับตาราง edms_users
+);
+
+
+
+-- สร้างตาราง edms_internal_out_documents
+CREATE TABLE edms_internal_out_documents (
+    document_id INT AUTO_INCREMENT PRIMARY KEY,  
+    document_number INT NOT NULL COMMENT 'เลขที่หนังสือ';
+    document_year YEAR DEFAULT YEAR(CURRENT_DATE) NOT NULL,  -- ปีของหนังสือ (อัตโนมัติเป็นปีปัจจุบัน)
+    title VARCHAR(255) NOT NULL,           -- ชื่อเรื่อง
+    sender VARCHAR(255) NOT NULL,          -- ผู้ส่ง
+    receiver VARCHAR(255),                 -- ผู้รับ (สามารถเป็น NULL ได้)
+    date_created DATE NOT NULL,            -- วันที่ส่งออก
+    attachment_path VARCHAR(255),          -- ไฟล์แนบ
+    note TEXT,                             -- หมายเหตุ
+    category_id INT,                       -- หมวดหมู่งาน (FK ไปยังตาราง edms_work_categories)
+    created_by INT,                        -- ผู้สร้าง (FK ไปยังตาราง edms_users)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- เวลาที่สร้างเอกสาร
+    FOREIGN KEY (category_id) REFERENCES edms_work_categories(category_id),  -- เชื่อมโยงกับตาราง edms_work_categories
+    FOREIGN KEY (created_by) REFERENCES edms_users(user_id)  -- เชื่อมโยงกับตาราง edms_users
+);
+
+-- สร้างตาราง edms_external_in_documents
+CREATE TABLE edms_external_in_documents (
+    document_id INT AUTO_INCREMENT PRIMARY KEY,  
+    document_number INT NOT NULL COMMENT 'เลขที่หนังสือ';
+    document_year YEAR DEFAULT YEAR(CURRENT_DATE) NOT NULL,  -- ปีของหนังสือ (อัตโนมัติเป็นปีปัจจุบัน)
+    title VARCHAR(255) NOT NULL,           -- ชื่อเรื่อง
+    sender VARCHAR(255) NOT NULL,          -- ผู้ส่ง
+    receiver VARCHAR(255),                 -- ผู้รับ (สามารถเป็น NULL ได้)
+    date_received DATE NOT NULL,           -- วันที่รับ
+    attachment_path VARCHAR(255),          -- ไฟล์แนบ
+    category_id INT,                       -- หมวดหมู่งาน (FK ไปยังตาราง edms_work_categories)
+    created_by INT,                        -- ผู้สร้าง (FK ไปยังตาราง edms_users)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- เวลาที่สร้างเอกสาร
+    note TEXT,                             -- หมายเหตุ
+    FOREIGN KEY (category_id) REFERENCES edms_work_categories(category_id),  -- เชื่อมโยงกับตาราง edms_work_categories
+    FOREIGN KEY (created_by) REFERENCES edms_users(user_id)  -- เชื่อมโยงกับตาราง edms_users
+);
+
+
+
+-- สร้างตาราง edms_external_out_documents
+CREATE TABLE edms_external_out_documents (
+    document_id INT AUTO_INCREMENT PRIMARY KEY,  
+    document_number INT NOT NULL COMMENT 'เลขที่หนังสือ';
+    document_year YEAR DEFAULT YEAR(CURRENT_DATE) NOT NULL,  -- ปีของหนังสือ (อัตโนมัติเป็นปีปัจจุบัน)
+    title VARCHAR(255) NOT NULL,           -- ชื่อเรื่อง
+    sender VARCHAR(255) NOT NULL,          -- ผู้ส่ง
+    receiver VARCHAR(255),                 -- ผู้รับ (สามารถเป็น NULL ได้)
+    date_created DATE NOT NULL,            -- วันที่ส่งออก
+    attachment_path VARCHAR(255),          -- ไฟล์แนบ
+    category_id INT,                       -- หมวดหมู่งาน (FK ไปยังตาราง edms_work_categories)
+    created_by INT,                        -- ผู้สร้าง (FK ไปยังตาราง edms_users)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- เวลาที่สร้างเอกสาร
+    note TEXT,                             -- หมายเหตุ
+    FOREIGN KEY (category_id) REFERENCES edms_work_categories(category_id),  -- เชื่อมโยงกับตาราง edms_work_categories
+    FOREIGN KEY (created_by) REFERENCES edms_users(user_id)  -- เชื่อมโยงกับตาราง edms_users
+);
+
+
+
+-- สร้างตาราง edms_circular_documents (หนังสือเวียน)
+CREATE TABLE edms_circular_documents (
+    document_id INT AUTO_INCREMENT PRIMARY KEY,  
+    document_number INT NOT NULL COMMENT 'เลขที่หนังสือ';
+    document_year YEAR DEFAULT YEAR(CURRENT_DATE) NOT NULL,  -- ปีของหนังสือ
+    title VARCHAR(255) NOT NULL,           -- ชื่อเรื่อง
+    sender VARCHAR(255) NOT NULL,          -- ผู้ส่ง
+    receiver VARCHAR(255),                 -- ผู้รับ
+    date_sent DATE NOT NULL,               -- วันที่ส่ง
+    attachment_path VARCHAR(255),          -- ไฟล์แนบ
+    note TEXT,                             -- หมายเหตุ
+    category_id INT,                       -- หมวดหมู่งาน
+    created_by INT,                        -- ผู้สร้าง
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- เวลาที่สร้างเอกสาร
+    FOREIGN KEY (category_id) REFERENCES edms_work_categories(category_id),  -- เชื่อมโยงกับ edms_work_categories
+    FOREIGN KEY (created_by) REFERENCES edms_users(user_id)  -- เชื่อมโยงกับ edms_users
+);
+
+-- สร้างตาราง edms_command_documents (หนังสือสั่งการ)
+CREATE TABLE edms_command_documents (
+    document_id INT AUTO_INCREMENT PRIMARY KEY,  
+    document_number INT NOT NULL COMMENT 'เลขที่หนังสือ';
+    document_year YEAR DEFAULT YEAR(CURRENT_DATE) NOT NULL,  -- ปีของหนังสือ
+    title VARCHAR(255) NOT NULL,           -- ชื่อเรื่อง
+    sender VARCHAR(255) NOT NULL,          -- ผู้ส่ง
+    receiver VARCHAR(255),                 -- ผู้รับ
+    date_sent DATE NOT NULL,               -- วันที่ส่ง
+    attachment_path VARCHAR(255),          -- ไฟล์แนบ
+    note TEXT,                             -- หมายเหตุ
+    category_id INT,                       -- หมวดหมู่งาน
+    created_by INT,                        -- ผู้สร้าง
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- เวลาที่สร้างเอกสาร
+    FOREIGN KEY (category_id) REFERENCES edms_work_categories(category_id),  -- เชื่อมโยงกับ edms_work_categories
+    FOREIGN KEY (created_by) REFERENCES edms_users(user_id)  -- เชื่อมโยงกับ edms_users
+);
+
+CREATE TABLE edms_job_assignment_documents (
+    assignment_id INT AUTO_INCREMENT PRIMARY KEY,  
+    document_number INT NOT NULL COMMENT 'เลขที่หนังสือ',
+    document_year YEAR DEFAULT YEAR(CURRENT_DATE) NOT NULL,  
+    title VARCHAR(255) NOT NULL,           
+    sender VARCHAR(255) NOT NULL,          
+    receiver VARCHAR(255),                 
+    document_type ENUMenum('รับ','ส่ง','เวียน','สั่งการ') NOT NULL COMMENT 'ประเภทเอกสาร (รับ, ส่ง, เวียน,สั่งการ)',  
+    position_type ENUM('สายวิชาการ', 'สายสนับสนุน') NOT NULL COMMENT 'ประเภทตำแหน่ง',  
+    date_created DATE NOT NULL,            
+    attachment_path VARCHAR(255),          
+    note TEXT,                             
+    category_id INT,                       
+    created_by INT,                        
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  
+    FOREIGN KEY (category_id) REFERENCES edms_work_categories(category_id),
+    FOREIGN KEY (created_by) REFERENCES edms_users(user_id)
+);

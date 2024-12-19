@@ -1,0 +1,48 @@
+edms/
+├── components/       # ส่วนประกอบเว็บไซต์
+│   ├── header.php   # แถบเมนูด้านข้าง
+│   ├── sidebar.php   # แถบเมนูด้านข้าง
+│   ├── navbar.php    # แถบนำทาง
+│   └── footer.php    # ส่วนท้ายเว็บ
+│
+├── config.php        # ตั้งค่าและเชื่อมต่อฐานข้อมูล
+├── index.php         # หน้าหลัก
+├── login.php         # เข้าสู่ระบบ
+├── register.php      # สร้างuser
+├── logout.php        # ออกจากระบบ
+├── work_categories.php  #หมวดหมู่งาน
+│
+├── internal_in/      # หนังสือรับเข้าภายใน
+│   ├── index.php
+│   ├── create.php
+│   ├── delete.php
+│   └── edit.php
+│
+├── internal_out/     # หนังสือส่งออกภายใน
+│   ├── index.php
+│   ├── create.php
+│   ├── delete.php
+│   └── edit.php
+│
+├── external_in/      # หนังสือรับเข้าภายนอก
+│   ├── index.php
+│   ├── create.php
+│   └── edit.php
+│
+├── external_out/     # หนังสือส่งออกภายนอก
+│   ├── index.php
+│   ├── create.php
+│   └── edit.php
+│
+├── circular/         # หนังสือเวียน
+│   ├── index.php
+│   ├── create.php
+│   ├── delete.php
+│   └── edit.php
+│
+├── command/          # หนังสือสั่งการ
+│   ├── index.php
+│   ├── create.php
+│   └── edit.php
+│
+└── uploads/          # โฟลเดอร์เก็บไฟล์
