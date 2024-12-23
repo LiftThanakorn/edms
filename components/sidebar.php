@@ -65,11 +65,26 @@ date_default_timezone_set('Asia/Bangkok'); // ตั้งค่าเขตเ�
     <a href="/edms/command/index.php" class="list-group-item list-group-item-action <?php echo (strpos($current_page, '/edms/command/index.php') !== false || strpos($current_page, '/edms/command/create.php') !== false || strpos($current_page, '/edms/command/edit.php') !== false) ? 'active' : ''; ?>">
         <i class="bi bi-command me-2"></i>หนังสือสั่งการ
     </a> -->
-    <!-- เมนู การมอบหมายงาน -->
-    <a href="/edms/jobassignment/index.php" class="list-group-item list-group-item-action <?php echo (strpos($current_page, '/edms/jobassignment/') !== false) ? 'active' : ''; ?>">
+
+        <!-- เมนู ทะเบียนการรับ-ส่งงานกำหนดตำแหน่ง -->
+        <a href="/edms/jobassignment/index.php" class="list-group-item list-group-item-action <?php echo (strpos($current_page, '/edms/jobassignment/') !== false) ? 'active' : ''; ?>">
         <i class="bi bi-graph-up-arrow me-2"></i>ทะเบียนการรับ-ส่งงานกำหนดตำแหน่ง
     </a>
 
+</div>
+
+
+<div class="list-group mt-3">
+    <!-- กลุ่มใหม่ สำหรับ ทะเบียนการรับ-ส่งงานกำหนดตำแหน่ง และ คำขอใบรับรอง -->
+    <div class="list-group-item list-group-item-secondary">
+        <strong><i class="bi bi-file-earmark-check me-2"></i>อื่น ๆ</strong>
+    </div>
+
+
+    <!-- เมนู คำขอใบรับรอง -->
+    <a href="/edms/certificaterequests/index.php" class="list-group-item list-group-item-action <?php echo (strpos($current_page, '/edms/certificaterequests/index.php') !== false || strpos($current_page, '/edms/certificaterequests/create.php') !== false || strpos($current_page, '/edms/certificaterequests/edit.php') !== false) ? 'active' : ''; ?>">
+        <i class="bi bi-file-earmark-text me-2"></i>คำขอใบรับรอง
+    </a>
 </div>
 
 <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>

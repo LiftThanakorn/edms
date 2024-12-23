@@ -1,8 +1,8 @@
 <?php
 session_start();
 
-// ตรวจสอบการเข้าสู่ระบบ
-if (!isset($_SESSION['user_id'])) {
+// ตรวจสอบการเข้าสู่ระบบและสิทธิ์แอดมิน
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../login.php");
     exit();
 }

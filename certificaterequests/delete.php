@@ -11,38 +11,38 @@ require_once '../config.php';
 
 // ตรวจสอบว่ามี ID ที่ส่งมาหรือไม่
 if (!isset($_GET['id'])) {
-    $_SESSION['message'] = "ไม่พบรหัสเอกสารที่ต้องการลบ";
+    $_SESSION['message'] = "ไม่พบรหัสคำขอที่ต้องการลบ";
     $_SESSION['message_type'] = "danger";
     header("Location: index.php");
     exit();
 }
 
 try {
-    // ดึงข้อมูลเอกสารเพื่อตรวจสอบไฟล์แนบ
-    $stmt = $pdo->prepare("SELECT * FROM edms_internal_out_documents WHERE document_id = ?");
+    // ดึงข้อมูลคำขอเพื่อตรวจสอบไฟล์แนบ
+    $stmt = $pdo->prepare("SELECT * FROM edms_certificate_requests WHERE request_id = ?");
     $stmt->execute([$_GET['id']]);
-    $document = $stmt->fetch(PDO::FETCH_ASSOC);
+    $request = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if (!$document) {
-        $_SESSION['message'] = "ไม่พบเอกสารที่ต้องการลบ";
+    if (!$request) {
+        $_SESSION['message'] = "ไม่พบคำขอที่ต้องการลบ";
         $_SESSION['message_type'] = "danger";
         header("Location: index.php");
         exit();
     }
 
     // ลบไฟล์แนบถ้ามี
-    if (!empty($document['attachment_path'])) {
-        $file_path = "uploads/" . date('Y', strtotime($document['date_created'])) . "/" . $document['attachment_path'];
+    if ($request['attachment_path']) {
+        $file_path = "uploads/" . date('Y', strtotime($request['date_created'])) . "/" . $request['attachment_path'];
         if (file_exists($file_path)) {
             unlink($file_path);
         }
     }
 
     // ลบข้อมูลจากฐานข้อมูล
-    $stmt = $pdo->prepare("DELETE FROM edms_internal_out_documents WHERE document_id = ?");
+    $stmt = $pdo->prepare("DELETE FROM edms_certificate_requests WHERE request_id = ?");
     $stmt->execute([$_GET['id']]);
 
-    $_SESSION['message'] = "ลบเอกสารสำเร็จ";
+    $_SESSION['message'] = "ลบคำขอสำเร็จ";
     $_SESSION['message_type'] = "success";
 
 } catch (PDOException $e) {

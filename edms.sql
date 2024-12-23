@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 19, 2024 at 05:12 PM
+-- Generation Time: Dec 23, 2024 at 06:28 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,24 @@ SET time_zone = "+00:00";
 --
 -- Database: `edms`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `edms_certificate_requests`
+--
+
+CREATE TABLE `edms_certificate_requests` (
+  `request_id` int(11) NOT NULL COMMENT 'รหัสคำขอ',
+  `document_number` int(11) NOT NULL COMMENT 'เลขที่หนังสือ',
+  `document_year` year(4) NOT NULL DEFAULT year(curdate()) COMMENT 'ปีของหนังสือ',
+  `receiver` varchar(255) DEFAULT NULL COMMENT 'ผู้รับหนังสือ',
+  `date_created` date NOT NULL COMMENT 'วันที่สร้างหนังสือ',
+  `attachment_path` varchar(255) DEFAULT NULL COMMENT 'ที่อยู่ไฟล์เอกสารแนบ',
+  `note` text DEFAULT NULL COMMENT 'หมายเหตุ',
+  `created_by` int(11) DEFAULT NULL COMMENT 'ผู้ที่สร้างคำขอ',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp() COMMENT 'เวลาที่คำขอถูกสร้าง'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- --------------------------------------------------------
 
@@ -108,6 +126,24 @@ CREATE TABLE `edms_external_out_documents` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `edms_id_card_requests`
+--
+
+CREATE TABLE `edms_id_card_requests` (
+  `request_id` int(11) NOT NULL COMMENT 'รหัสคำขอ',
+  `document_number` int(11) NOT NULL COMMENT 'เลขที่คำขอ',
+  `document_year` year(4) NOT NULL DEFAULT year(curdate()) COMMENT 'ปีของคำขอ',
+  `applicant_name` varchar(255) NOT NULL COMMENT 'ชื่อผู้ยื่นคำขอ',
+  `date_submitted` date NOT NULL COMMENT 'วันที่ยื่นคำขอ',
+  `attachment_path` varchar(255) DEFAULT NULL COMMENT 'ที่อยู่ไฟล์เอกสารแนบ',
+  `note` text DEFAULT NULL COMMENT 'หมายเหตุ',
+  `created_by` int(11) DEFAULT NULL COMMENT 'ผู้ที่สร้างคำขอ',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp() COMMENT 'เวลาที่คำขอถูกสร้าง'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `edms_internal_in_documents`
 --
 
@@ -169,7 +205,9 @@ CREATE TABLE `edms_job_assignment_documents` (
   `note` text DEFAULT NULL,
   `category_id` int(11) DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `document_reference_number` varchar(50) DEFAULT NULL COMMENT 'เลขที่อ้างอิงหนังสือ',
+  `reference_date` date DEFAULT NULL COMMENT 'วันที่อ้างอิงหนังสือ'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- --------------------------------------------------------
@@ -223,6 +261,13 @@ INSERT INTO `edms_work_categories` (`category_id`, `category_name`, `description
 --
 
 --
+-- Indexes for table `edms_certificate_requests`
+--
+ALTER TABLE `edms_certificate_requests`
+  ADD PRIMARY KEY (`request_id`),
+  ADD KEY `created_by` (`created_by`);
+
+--
 -- Indexes for table `edms_circular_documents`
 --
 ALTER TABLE `edms_circular_documents`
@@ -252,6 +297,13 @@ ALTER TABLE `edms_external_in_documents`
 ALTER TABLE `edms_external_out_documents`
   ADD PRIMARY KEY (`document_id`),
   ADD KEY `category_id` (`category_id`),
+  ADD KEY `created_by` (`created_by`);
+
+--
+-- Indexes for table `edms_id_card_requests`
+--
+ALTER TABLE `edms_id_card_requests`
+  ADD PRIMARY KEY (`request_id`),
   ADD KEY `created_by` (`created_by`);
 
 --
@@ -297,6 +349,12 @@ ALTER TABLE `edms_work_categories`
 --
 
 --
+-- AUTO_INCREMENT for table `edms_certificate_requests`
+--
+ALTER TABLE `edms_certificate_requests`
+  MODIFY `request_id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'รหัสคำขอ';
+
+--
 -- AUTO_INCREMENT for table `edms_circular_documents`
 --
 ALTER TABLE `edms_circular_documents`
@@ -319,6 +377,12 @@ ALTER TABLE `edms_external_in_documents`
 --
 ALTER TABLE `edms_external_out_documents`
   MODIFY `document_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `edms_id_card_requests`
+--
+ALTER TABLE `edms_id_card_requests`
+  MODIFY `request_id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'รหัสคำขอ';
 
 --
 -- AUTO_INCREMENT for table `edms_internal_in_documents`
@@ -355,6 +419,12 @@ ALTER TABLE `edms_work_categories`
 --
 
 --
+-- Constraints for table `edms_certificate_requests`
+--
+ALTER TABLE `edms_certificate_requests`
+  ADD CONSTRAINT `edms_certificate_requests_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `edms_users` (`user_id`);
+
+--
 -- Constraints for table `edms_circular_documents`
 --
 ALTER TABLE `edms_circular_documents`
@@ -381,6 +451,12 @@ ALTER TABLE `edms_external_in_documents`
 ALTER TABLE `edms_external_out_documents`
   ADD CONSTRAINT `edms_external_out_documents_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `edms_work_categories` (`category_id`),
   ADD CONSTRAINT `edms_external_out_documents_ibfk_2` FOREIGN KEY (`created_by`) REFERENCES `edms_users` (`user_id`);
+
+--
+-- Constraints for table `edms_id_card_requests`
+--
+ALTER TABLE `edms_id_card_requests`
+  ADD CONSTRAINT `edms_id_card_requests_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `edms_users` (`user_id`);
 
 --
 -- Constraints for table `edms_internal_in_documents`

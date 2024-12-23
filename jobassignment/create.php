@@ -82,7 +82,6 @@ if (isset($_POST['action']) && $_POST['action'] === 'get_next_number') {
     exit();
 }
 
-// การจัดการการส่งฟอร์ม
 if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['action'])) {
     try {
         $document_type = $_POST['document_type'];
@@ -97,17 +96,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['action'])) {
             $file_name = handleFileUpload($_FILES['attachment']);
         }
 
+        // กำหนดค่า document_reference_number
+        $document_reference_number = null;
+        if ($document_type === 'รับ' && !empty($_POST['document_reference_number'])) {
+            $document_reference_number = $_POST['document_reference_number'];
+        }
+
         $stmt = $pdo->prepare("
-            INSERT INTO edms_job_assignment_documents (
-                document_number, document_year, title, sender, receiver,
-                document_type, position_type, date_created, attachment_path,
-                note, category_id, created_by
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ");
+        INSERT INTO edms_job_assignment_documents (
+            document_number, document_year, document_reference_number, reference_date, title, 
+            sender, receiver, document_type, position_type, date_created, 
+            attachment_path, note, category_id, created_by
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ");
 
         $stmt->execute([
             $next_number,
             $current_year,
+            $document_reference_number,
+            $_POST['reference_date'] ?? null,
             $_POST['title'],
             $_POST['sender'],
             $_POST['receiver'],
@@ -140,7 +147,7 @@ $current_year = date('Y') + 543; // แปลงเป็น พ.ศ.
 
 <head>
     <?php require_once '../components/header.php'; ?>
-    <title>บันทึกการมอบหมายงาน</title>
+    <title>เพิมทะเบียนรับ - ส่ง</title>
 </head>
 
 <body>
@@ -155,14 +162,14 @@ $current_year = date('Y') + 543; // แปลงเป็น พ.ศ.
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="/edms/">หน้าหลัก</a></li>
-                        <li class="breadcrumb-item"><a href="index.php">การมอบหมายงาน</a></li>
-                        <li class="breadcrumb-item active">บันทึกการมอบหมายงาน</li>
+                        <li class="breadcrumb-item"><a href="index.php">ทะเบียนรับ - ส่งงาน กำหนดตำแหน่ง</a></li>
+                        <li class="breadcrumb-item active">เพิมทะเบียนรับ - ส่ง</li>
                     </ol>
                 </nav>
 
                 <div class="card shadow">
                     <div class="card-header bg-primary text-white">
-                        <h4 class="mb-0">บันทึกการมอบหมายงาน</h4>
+                        <h4 class="mb-0">เพิ่มทะเบียนรับ - ส่ง งานกำหนดตำแหน่ง</h4>
                     </div>
                     <div class="card-body">
                         <form action="" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
@@ -173,21 +180,37 @@ $current_year = date('Y') + 543; // แปลงเป็น พ.ศ.
                                         <label class="form-label">เลขที่หนังสือ</label>
                                         <input type="text" id="document_display" class="form-control" value="<?php echo "$next_number/$current_year"; ?>" readonly>
                                     </div>
+                                    <!-- เพิ่มหลังจาก input เลขที่หนังสือ -->
+                                    <div class="mb-3">
+                                        <label class="form-label">เลขที่อ้างอิงหนังสือ</label>
+                                        <input type="text" name="document_reference_number" id="document_reference_number" class="form-control" disabled>
+                                        <div class="form-text">สามารถกรอกได้เฉพาะเมื่อประเภทเอกสารเป็น "รับ" เท่านั้น</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">วันที่อ้างอิงหนังสือ</label>
+                                        <input type="date" name="reference_date" id="reference_date" class="form-control" disabled>
+                                        <div class="form-text">สามารถกรอกได้เฉพาะเมื่อประเภทเอกสารเป็น "รับ" เท่านั้น</div>
+                                    </div>
                                     <div class="mb-3">
                                         <label class="form-label">ชื่อเรื่อง</label>
                                         <input type="text" name="title" class="form-control" required>
                                         <div class="invalid-feedback">กรุณากรอกชื่อเรื่อง</div>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">ผู้มอบหมายงาน</label>
-                                        <input type="text" name="sender" class="form-control"
-                                            value="<?php echo htmlspecialchars($_SESSION['username']); ?>" readonly>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">ผู้รับมอบหมายงาน</label>
+                                        <label class="form-label">ผู้รับหรือผู้ส่ง</label>
                                         <input type="text" name="receiver" class="form-control" required>
                                         <div class="invalid-feedback">กรุณากรอกผู้รับมอบหมายงาน</div>
                                     </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">หมายเหตุ</label>
+                                        <textarea name="note" class="form-control" rows="3"
+                                            placeholder="กรอกหมายเหตุ (ถ้ามี)"><?php echo isset($_POST['note']) ? htmlspecialchars($_POST['note']) : ''; ?></textarea>
+                                    </div>
+                                </div>
+
+                                <!-- ฟอร์มด้านขวา -->
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="form-label">ประเภทเอกสาร</label>
                                         <select name="document_type" id="document_type" class="form-select" required>
@@ -199,10 +222,6 @@ $current_year = date('Y') + 543; // แปลงเป็น พ.ศ.
                                         </select>
                                         <div class="invalid-feedback">กรุณาเลือกประเภทเอกสาร</div>
                                     </div>
-                                </div>
-
-                                <!-- ฟอร์มด้านขวา -->
-                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="form-label">ประเภทตำแหน่ง</label>
                                         <select name="position_type" id="position_type" class="form-select" required>
@@ -211,12 +230,6 @@ $current_year = date('Y') + 543; // แปลงเป็น พ.ศ.
                                             <option value="สายสนับสนุน">สายสนับสนุน</option>
                                         </select>
                                         <div class="invalid-feedback">กรุณาเลือกประเภทตำแหน่ง</div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">ตันที่มอบหมาย</label>
-                                        <input type="date" name="date_created" class="form-control"
-                                            value="<?php echo date('Y-m-d'); ?>" required>
-                                        <div class="invalid-feedback">กรุณาเลือกวันที่</div>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">หมวดหมู่งาน</label>
@@ -231,17 +244,20 @@ $current_year = date('Y') + 543; // แปลงเป็น พ.ศ.
                                         <div class="invalid-feedback">กรุณาเลือกหมวดหมู่</div>
                                     </div>
                                     <div class="mb-3">
+                                        <label class="form-label">วันที่สร้าง</label>
+                                        <input type="date" name="date_created" class="form-control"
+                                            value="<?php echo date('Y-m-d'); ?>" required>
+                                        <div class="invalid-feedback">กรุณาเลือกวันที่</div>
+                                    </div>
+                                    <div class="mb-3">
                                         <label class="form-label">ไฟล์แนบ (PDF เท่านั้น, ไม่เกิน 5MB)</label>
                                         <input type="file" name="attachment" class="form-control" accept=".pdf">
                                         <div class="form-text">รองรับเฉพาะไฟล์ PDF ขนาดไม่เกิน 5MB</div>
                                     </div>
-                                </div>
-
-                                <div class="col-12">
                                     <div class="mb-3">
-                                        <label class="form-label">หมายเหตุ</label>
-                                        <textarea name="note" class="form-control" rows="3"
-                                            placeholder="กรอกหมายเหตุ (ถ้ามี)"><?php echo isset($_POST['note']) ? htmlspecialchars($_POST['note']) : ''; ?></textarea>
+                                        <label class="form-label">ผู้สร้าง</label>
+                                        <input type="text" name="sender" class="form-control"
+                                            value="<?php echo htmlspecialchars($_SESSION['username']); ?>" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -260,6 +276,8 @@ $current_year = date('Y') + 543; // แปลงเป็น พ.ศ.
             </div>
         </div>
     </div>
+
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -314,6 +332,95 @@ $current_year = date('Y') + 543; // แปลงเป็น พ.ศ.
                     event.preventDefault();
                     event.stopPropagation();
                 }
+                form.classList.add('was-validated');
+            }, false);
+
+            // เรียกฟังก์ชันครั้งแรกเพื่อตั้งค่าเริ่มต้น
+            updateDocumentNumber();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // เลือก elements ที่ต้องการใช้งาน
+            const documentTypeSelect = document.getElementById('document_type');
+            const positionTypeSelect = document.getElementById('position_type');
+            const documentDisplay = document.getElementById('document_display');
+            const documentReferenceInput = document.getElementById('document_reference_number');
+            const referenceDateInput = document.getElementById('reference_date');
+
+            // ฟังก์ชันอัพเดทเลขที่เอกสารและจัดการฟิลด์เลขที่อ้างอิง
+            async function updateDocumentNumber() {
+                const documentType = documentTypeSelect.value;
+                const positionType = positionTypeSelect.value;
+
+                // จัดการการแสดงผลของ document_reference_number และ reference_date
+                if (documentType === 'รับ') {
+                    documentReferenceInput.disabled = false;
+                    referenceDateInput.disabled = false;
+                    documentReferenceInput.value = documentReferenceInput.value || '';
+                    referenceDateInput.value = referenceDateInput.value || '';
+                } else {
+                    documentReferenceInput.disabled = true;
+                    referenceDateInput.disabled = true;
+                    documentReferenceInput.value = '';
+                    referenceDateInput.value = '';
+                }
+
+                // ตรวจสอบว่ามีการเลือกทั้งสองค่าแล้ว
+                if (documentType && positionType) {
+                    try {
+                        const formData = new FormData();
+                        formData.append('action', 'get_next_number');
+                        formData.append('document_type', documentType);
+                        formData.append('position_type', positionType);
+
+                        const response = await fetch('', {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('เกิดข้อผิดพลาดในการดึงข้อมูล');
+                        }
+
+                        const data = await response.json();
+                        documentDisplay.value = `${data.next_number}/${data.year}`;
+                    } catch (error) {
+                        console.error('Error:', error);
+                        documentDisplay.value = '-/<?php echo $current_year; ?>';
+                    }
+                } else {
+                    documentDisplay.value = '-/<?php echo $current_year; ?>';
+                }
+            }
+
+            // เพิ่ม event listeners
+            documentTypeSelect.addEventListener('change', updateDocumentNumber);
+            positionTypeSelect.addEventListener('change', updateDocumentNumber);
+
+            // Form validation
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+
+                const documentType = documentTypeSelect.value;
+                if (documentType === 'รับ') {
+                    if (!documentReferenceInput.value.trim()) {
+                        event.preventDefault();
+                        documentReferenceInput.setCustomValidity('กรุณากรอกเลขที่อ้างอิงหนังสือ');
+                    } else {
+                        documentReferenceInput.setCustomValidity('');
+                    }
+
+                    if (!referenceDateInput.value) {
+                        event.preventDefault();
+                        referenceDateInput.setCustomValidity('กรุณากรอกวันที่อ้างอิงหนังสือ');
+                    } else {
+                        referenceDateInput.setCustomValidity('');
+                    }
+                }
+
                 form.classList.add('was-validated');
             }, false);
 
