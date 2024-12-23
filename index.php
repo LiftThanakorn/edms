@@ -74,12 +74,14 @@ $certificate_count = $pdo->query($certificate_count_query)->fetchColumn();
             padding: 24px;
             height: 100%;
             transition: all 0.3s ease;
-            border: 1px solid rgba(0,0,0,0.1);
+            border: 1px solid rgba(0, 0, 0, 0.1);
         }
+
         .stat-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
         }
+
         .stat-icon {
             width: 48px;
             height: 48px;
@@ -89,9 +91,11 @@ $certificate_count = $pdo->query($certificate_count_query)->fetchColumn();
             border-radius: 12px;
             margin-bottom: 16px;
         }
+
         .stat-icon i {
             font-size: 24px;
         }
+
         .stat-number {
             font-size: 32px;
             font-weight: 700;
@@ -99,40 +103,62 @@ $certificate_count = $pdo->query($certificate_count_query)->fetchColumn();
             margin: 8px 0;
             line-height: 1;
         }
+
         .stat-label {
             font-size: 14px;
             color: #64748b;
             font-weight: 500;
         }
-        
+
         /* สีสำหรับไอคอนแต่ละประเภท */
-        .bg-soft-primary {
-            background: rgba(13, 110, 253, 0.1);
-            color: #0d6efd;
-        }
-        .bg-soft-success {
-            background: rgba(25, 135, 84, 0.1);
-            color: #198754;
-        }
-        .bg-soft-warning {
-            background: rgba(255, 193, 7, 0.1);
-            color: #ffc107;
-        }
+        .bg-mint {
+        background: rgba(52, 191, 163, 0.1);
+        color: rgba(52, 191, 163, 1);
+    }
+    
+    .bg-mint-light {
+        background: rgba(114, 223, 201, 0.1);
+        color: rgba(114, 223, 201, 1); 
+    }
+    
+    .bg-blue {
+        background: rgba(72, 110, 255, 0.1);
+        color: rgba(72, 110, 255, 1);
+    }
+    
+    .bg-orange {
+        background: rgba(255, 180, 0, 0.1);
+        color: rgba(255, 180, 0, 1);
+    }
+    
+    .bg-yellow {
+        background: rgba(255, 207, 86, 0.1);
+        color: rgba(255, 207, 86, 1);
+    }
+    
+    .bg-purple {
+        background: rgba(153, 102, 255, 0.1);
+        color: rgba(153, 102, 255, 1);
+    }
+
         .chart-container {
             position: relative;
             height: 300px;
             margin: 20px 0;
         }
+
         .card {
             border: none;
             border-radius: 12px;
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
         }
+
         .card-header {
             background: none;
             border-bottom: none;
             padding: 20px;
         }
+
         .card-header h5 {
             color: #2c3e50;
             font-size: 16px;
@@ -156,7 +182,7 @@ $certificate_count = $pdo->query($certificate_count_query)->fetchColumn();
                     <div class="col-md-4">
                         <a href="internal_in/index.php" class="text-decoration-none">
                             <div class="stat-card">
-                                <div class="stat-icon bg-soft-success">
+                            <div class="stat-icon bg-mint">
                                     <i class="bi bi-inbox-fill"></i>
                                 </div>
                                 <div class="stat-label">หนังสือรับเข้าภายใน</div>
@@ -169,7 +195,7 @@ $certificate_count = $pdo->query($certificate_count_query)->fetchColumn();
                     <div class="col-md-4">
                         <a href="internal_out/index.php" class="text-decoration-none">
                             <div class="stat-card">
-                                <div class="stat-icon bg-soft-success">
+                            <div class="stat-icon bg-mint-light">
                                     <i class="bi bi-send-fill"></i>
                                 </div>
                                 <div class="stat-label">หนังสือส่งออกภายใน</div>
@@ -182,7 +208,7 @@ $certificate_count = $pdo->query($certificate_count_query)->fetchColumn();
                     <div class="col-md-4">
                         <a href="circular/index.php" class="text-decoration-none">
                             <div class="stat-card">
-                                <div class="stat-icon bg-soft-primary">
+                            <div class="stat-icon bg-blue">
                                     <i class="bi bi-repeat"></i>
                                 </div>
                                 <div class="stat-label">หนังสือเวียน</div>
@@ -195,7 +221,7 @@ $certificate_count = $pdo->query($certificate_count_query)->fetchColumn();
                     <div class="col-md-4">
                         <a href="idcardrequests/index.php" class="text-decoration-none">
                             <div class="stat-card">
-                                <div class="stat-icon bg-soft-primary">
+                            <div class="stat-icon bg-orange">
                                     <i class="bi bi-person-vcard"></i>
                                 </div>
                                 <div class="stat-label">คำขอบัตรประจำตัว</div>
@@ -208,7 +234,7 @@ $certificate_count = $pdo->query($certificate_count_query)->fetchColumn();
                     <div class="col-md-4">
                         <a href="certificaterequests/index.php" class="text-decoration-none">
                             <div class="stat-card">
-                                <div class="stat-icon bg-soft-primary">
+                            <div class="stat-icon bg-yellow">
                                     <i class="bi bi-file-earmark-text"></i>
                                 </div>
                                 <div class="stat-label">คำขอหนังสือรับรอง</div>
@@ -221,7 +247,7 @@ $certificate_count = $pdo->query($certificate_count_query)->fetchColumn();
                     <div class="col-md-4">
                         <a href="jobassignment/index.php" class="text-decoration-none">
                             <div class="stat-card">
-                                <div class="stat-icon bg-soft-secondary">
+                            <div class="stat-icon bg-purple">
                                     <i class="bi bi-graph-up-arrow"></i>
                                 </div>
                                 <div class="stat-label">ทะเบียนการรับ-ส่งงานกำหนดตำแหน่ง</div>
@@ -301,125 +327,136 @@ $certificate_count = $pdo->query($certificate_count_query)->fetchColumn();
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-    // กราฟวงกลมแสดงสัดส่วนเอกสารทั้งหมด
-    const ctx1 = document.getElementById('documentsChart').getContext('2d');
-    new Chart(ctx1, {
-        type: 'doughnut',
-        data: {
-            labels: [
-                'หนังสือรับเข้าภายใน',
-                'หนังสือส่งออกภายใน',
-                'หนังสือเวียน',
-                'คำขอบัตรประจำตัว',
-                'คำขอหนังสือรับรอง',
-                'ทะเบียนการรับ-ส่งงานกำหนดตำแหน่ง'
-            ],
-            datasets: [{
-                data: [
-                    <?php echo $internal_in_count; ?>,
-                    <?php echo $internal_out_count; ?>,
-                    <?php echo $circular_count; ?>,
-                    <?php echo $id_card_count; ?>,
-                    <?php echo $certificate_count; ?>,
-                    <?php echo $job_assignment_count; ?>
+        // กราฟวงกลมแสดงสัดส่วนเอกสารทั้งหมด
+        const ctx1 = document.getElementById('documentsChart').getContext('2d');
+        new Chart(ctx1, {
+            type: 'doughnut',
+            data: {
+                labels: [
+                    'หนังสือรับเข้าภายใน',
+                    'หนังสือส่งออกภายใน',
+                    'หนังสือเวียน',
+                    'คำขอบัตรประจำตัว',
+                    'คำขอหนังสือรับรอง',
+                    'ทะเบียนการรับ-ส่งงานกำหนดตำแหน่ง'
                 ],
-                backgroundColor: [
-                    'rgba(52, 191, 163, 1)',   // มิ้นต์ - รับเข้า
-                    'rgba(114, 223, 201, 0.9)', // มิ้นต์อ่อน - ส่งออก
-                    'rgba(72, 110, 255, 1)',    // น้ำเงิน - เวียน
-                    'rgba(255, 180, 0, 1)',     // ส้ม - บัตร
-                    'rgba(255, 207, 86, 0.9)',  // เหลือง - รับรอง
-                    'rgba(153, 102, 255, 1)'    // ม่วง - มอบหมายงาน
-                ],
-                borderWidth: 0
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            cutout: '65%',
-            plugins: {
-                legend: {
-                    position: 'right',
-                    labels: {
-                        padding: 20,
-                        font: {
-                            size: 13
-                        },
-                        usePointStyle: true,
-                        pointStyle: 'circle'
+                datasets: [{
+                    data: [
+                        <?php echo $internal_in_count; ?>,
+                        <?php echo $internal_out_count; ?>,
+                        <?php echo $circular_count; ?>,
+                        <?php echo $id_card_count; ?>,
+                        <?php echo $certificate_count; ?>,
+                        <?php echo $job_assignment_count; ?>
+                    ],
+                    backgroundColor: [
+                        'rgba(52, 191, 163, 1)', // มิ้นต์ - รับเข้า
+                        'rgba(114, 223, 201, 0.9)', // มิ้นต์อ่อน - ส่งออก
+                        'rgba(72, 110, 255, 1)', // น้ำเงิน - เวียน
+                        'rgba(255, 180, 0, 1)', // ส้ม - บัตร
+                        'rgba(255, 207, 86, 0.9)', // เหลือง - รับรอง
+                        'rgba(153, 102, 255, 1)' // ม่วง - มอบหมายงาน
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '65%',
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            padding: 20,
+                            font: {
+                                size: 13
+                            },
+                            usePointStyle: true,
+                            pointStyle: 'circle'
+                        }
                     }
                 }
             }
-        }
-    });
+        });
 
-    // Update bar chart code
-    const ctx2 = document.getElementById('documentTypesChart').getContext('2d');
-    new Chart(ctx2, {
-        type: 'bar',
-        data: {
-            labels: [
-                <?php 
-                foreach($category_stats as $stat) {
-                    echo "'" . $stat['category_name'] . "',";
-                }
-                ?>
-            ],
-            datasets: [{
-                label: 'จำนวนเอกสาร',
-                data: [
+        // Update bar chart code
+        const ctx2 = document.getElementById('documentTypesChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: [
                     <?php
-                    foreach($category_stats as $stat) {
-                        echo $stat['total_documents'] . ",";
+                    foreach ($category_stats as $stat) {
+                        echo "'" . $stat['category_name'] . "',";
                     }
                     ?>
                 ],
-                backgroundColor: [
-                    'rgba(52, 191, 163, 1)',    // มิ้นต์
-                    'rgba(72, 110, 255, 1)',    // น้ำเงิน
-                    'rgba(255, 180, 0, 1)',     // ส้ม
-                    'rgba(153, 102, 255, 1)',   // ม่วง
-                    'rgba(255, 99, 132, 1)',    // ชมพู
-                    'rgba(75, 192, 192, 1)',    // ฟ้า
-                    'rgba(255, 159, 64, 1)'     // ส้มอ่อน
-                ],
-                borderWidth: 0,
-                borderRadius: 6
-            }]
-        },
-        options: {
-            indexAxis: 'y',
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                x: {
-                    beginAtZero: true,
-                    grid: {
-                        color: 'rgba(0, 0, 0, 0.05)'
+                datasets: [{
+                    label: 'จำนวนเอกสาร',
+                    data: [
+                        <?php foreach ($category_stats as $stat) {
+                            echo $stat['total_documents'] . ",";
+                        } ?>
+                    ],
+                    backgroundColor: [
+                        '#FF6384', // ชมพูสด
+                        '#36A2EB', // ฟ้าสด
+                        '#FFCE56', // เหลืองสด
+                        '#4BC0C0', // เขียวมิ้นต์
+                        '#9966FF', // ม่วงสด
+                        '#FF9F40', // ส้มสด
+                        '#7CD1B8' // เขียวอ่อน
+                    ],
+                    borderWidth: 0,
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        grid: {
+                            display: false
+                        }
                     }
                 },
-                y: {
-                    grid: {
+                plugins: {
+                    legend: {
                         display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return ` ${context.parsed.x} เอกสาร`;
+                            }
+                        }
+                    },
+                    datalabels: {
+                        display: true,
+                        align: 'end',
+                        anchor: 'end',
+                        color: '#666',
+                        font: {
+                            weight: 'bold'
+                        },
+                        formatter: function(value) {
+                            return value;
+                        }
                     }
-                }
-            },
-            plugins: {
-                legend: {
-                    display: false
                 },
-                title: {
-                    display: true,
-                    text: 'จำนวนเอกสารตามหมวดหมู่งาน',
-                    padding: {
-                        bottom: 20
-                    }
-                }
-            },
-            barThickness: 25
-        }
-    });
+                barThickness: 30,
+                maxBarThickness: 35
+            }
+        });
     </script>
 </body>
 
