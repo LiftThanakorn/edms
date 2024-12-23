@@ -21,8 +21,27 @@ $external_in_count_query = "SELECT COUNT(*) FROM edms_external_in_documents";
 $external_out_count_query = "SELECT COUNT(*) FROM edms_external_out_documents";
 $circular_count_query = "SELECT COUNT(*) FROM edms_circular_documents";
 $command_count_query = "SELECT COUNT(*) FROM edms_command_documents";
+$id_card_count_query = "SELECT COUNT(*) FROM edms_id_card_requests";
+$certificate_count_query = "SELECT COUNT(*) FROM edms_certificate_requests";
 
-// ดึงข��อมูลจากฐานข้อมูล
+// Replace category stats query
+$category_stats_query = "
+    SELECT 
+        c.category_name,
+        COUNT(DISTINCT d1.document_id) + 
+        COUNT(DISTINCT d2.document_id) + 
+        COUNT(DISTINCT d3.document_id) as total_documents
+    FROM edms_work_categories c
+    LEFT JOIN edms_internal_in_documents d1 ON c.category_id = d1.category_id
+    LEFT JOIN edms_internal_out_documents d2 ON c.category_id = d2.category_id
+    LEFT JOIN edms_circular_documents d3 ON c.category_id = d3.category_id
+    GROUP BY c.category_id, c.category_name
+    ORDER BY total_documents DESC
+";
+
+$category_stats = $pdo->query($category_stats_query)->fetchAll(PDO::FETCH_ASSOC);
+
+// ดึงข้อมูลจากฐานข้อมูล
 $user_count = $pdo->query($user_count_query)->fetchColumn();
 $category_count = $pdo->query($category_count_query)->fetchColumn();
 $internal_in_count = $pdo->query($internal_in_count_query)->fetchColumn();
@@ -31,6 +50,8 @@ $external_in_count = $pdo->query($external_in_count_query)->fetchColumn();
 $external_out_count = $pdo->query($external_out_count_query)->fetchColumn();
 $circular_count = $pdo->query($circular_count_query)->fetchColumn();
 $command_count = $pdo->query($command_count_query)->fetchColumn();
+$id_card_count = $pdo->query($id_card_count_query)->fetchColumn();
+$certificate_count = $pdo->query($certificate_count_query)->fetchColumn();
 ?>
 
 <!DOCTYPE html>
@@ -164,6 +185,32 @@ $command_count = $pdo->query($command_count_query)->fetchColumn();
                         </a>
                     </div>
 
+                    <!-- คำขอบัตรประจำตัว -->
+                    <div class="col-md-4">
+                        <a href="idcardrequests/index.php" class="text-decoration-none">
+                            <div class="stat-card">
+                                <div class="stat-icon bg-soft-primary">
+                                    <i class="bi bi-person-vcard"></i>
+                                </div>
+                                <div class="stat-label">คำขอบัตรประจำตัว</div>
+                                <div class="stat-number"><?php echo number_format($id_card_count); ?></div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- คำขอหนังสือรับรอง -->
+                    <div class="col-md-4">
+                        <a href="certificaterequests/index.php" class="text-decoration-none">
+                            <div class="stat-card">
+                                <div class="stat-icon bg-soft-primary">
+                                    <i class="bi bi-file-earmark-text"></i>
+                                </div>
+                                <div class="stat-label">คำขอหนังสือรับรอง</div>
+                                <div class="stat-number"><?php echo number_format($certificate_count); ?></div>
+                            </div>
+                        </a>
+                    </div>
+
                     <!-- หนังสือรับเข้าภายนอก 
                     <div class="col-md-4">
                         <a href="external_in/index.php" class="text-decoration-none">
@@ -219,7 +266,7 @@ $command_count = $pdo->query($command_count_query)->fetchColumn();
                     <div class="col-md-6">
                         <div class="card shadow-sm">
                             <div class="card-header">
-                                <h5 class="mb-0">เอกสารภายใน/ภายนอก</h5>
+                                <h5 class="mb-0">จำนวนเอกสารตามหมวดหมู่</h5>
                             </div>
                             <div class="card-body">
                                 <div class="chart-container">
@@ -243,27 +290,24 @@ $command_count = $pdo->query($command_count_query)->fetchColumn();
             labels: [
                 'หนังสือรับเข้าภายใน',
                 'หนังสือส่งออกภายใน',
-                'หนังสือรับเข้าภายนอก',
-                'หนังสือส่งออกภายนอก',
                 'หนังสือเวียน',
-                'หนังสือสั่งการ'
+                'คำขอบัตรประจำตัว',
+                'คำขอหนังสือรับรอง'
             ],
             datasets: [{
                 data: [
                     <?php echo $internal_in_count; ?>,
                     <?php echo $internal_out_count; ?>,
-                    <?php echo $external_in_count; ?>,
-                    <?php echo $external_out_count; ?>,
                     <?php echo $circular_count; ?>,
-                    <?php echo $command_count; ?>
+                    <?php echo $id_card_count; ?>,
+                    <?php echo $certificate_count; ?>
                 ],
                 backgroundColor: [
-                    'rgba(25, 135, 84, 0.9)',   // success
-                    'rgba(25, 135, 84, 0.7)',   // success lighter
-                    'rgba(255, 193, 7, 0.9)',   // warning
-                    'rgba(255, 193, 7, 0.7)',   // warning lighter
-                    'rgba(13, 110, 253, 0.9)',  // primary
-                    'rgba(13, 110, 253, 0.7)'   // primary lighter
+                    'rgba(25, 135, 84, 0.9)',   
+                    'rgba(25, 135, 84, 0.7)',   
+                    'rgba(13, 110, 253, 0.9)',
+                    'rgba(255, 193, 7, 0.9)',
+                    'rgba(255, 193, 7, 0.7)'
                 ],
                 borderWidth: 0
             }]
@@ -293,61 +337,51 @@ $command_count = $pdo->query($command_count_query)->fetchColumn();
     new Chart(ctx2, {
         type: 'bar',
         data: {
-            labels: ['เอกสารรับเข้า', 'เอกสารส่งออก', 'เอกสารอื่นๆ'],
-            datasets: [
-                {
-                    label: 'ภายใน',
-                    data: [
-                        <?php echo $internal_in_count; ?>,
-                        <?php echo $internal_out_count; ?>,
-                        <?php echo $circular_count; ?>
-                    ],
-                    backgroundColor: 'rgba(25, 135, 84, 0.8)'  // success
-                },
-                {
-                    label: 'ภายนอก',
-                    data: [
-                        <?php echo $external_in_count; ?>,
-                        <?php echo $external_out_count; ?>,
-                        <?php echo $command_count; ?>
-                    ],
-                    backgroundColor: 'rgba(255, 193, 7, 0.8)'  // warning
+            labels: [
+                <?php 
+                foreach($category_stats as $stat) {
+                    echo "'" . $stat['category_name'] . "',";
                 }
-            ]
+                ?>
+            ],
+            datasets: [{
+                label: 'จำนวนเอกสาร',
+                data: [
+                    <?php
+                    foreach($category_stats as $stat) {
+                        echo $stat['total_documents'] . ",";
+                    }
+                    ?>
+                ],
+                backgroundColor: 'rgba(25, 135, 84, 0.8)'
+            }]
         },
         options: {
+            indexAxis: 'y',
             responsive: true,
             maintainAspectRatio: false,
             scales: {
                 x: {
+                    beginAtZero: true,
                     grid: {
-                        display: false
+                        color: 'rgba(0, 0, 0, 0.05)'
                     }
                 },
                 y: {
-                    beginAtZero: true,
                     grid: {
-                        color: 'rgba(0, 0, 0, 0.05)',
-                        drawBorder: false
-                    },
-                    ticks: {
-                        font: {
-                            size: 12
-                        }
+                        display: false
                     }
                 }
             },
             plugins: {
                 legend: {
-                    position: 'top',
-                    align: 'start',
-                    labels: {
-                        usePointStyle: true,
-                        pointStyle: 'circle',
-                        padding: 20,
-                        font: {
-                            size: 13
-                        }
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: 'จำนวนเอกสารตามหมวดหมู่งาน',
+                    padding: {
+                        bottom: 20
                     }
                 }
             },

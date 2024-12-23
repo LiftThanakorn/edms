@@ -15,19 +15,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 try {
     $stmt = $pdo->prepare("
     SELECT 
-        d.assignment_id,
-        d.document_number,
-        d.document_year,
-        d.document_reference_number,  -- เพิ่มบรรทัดนี้
-        d.title,
-        d.sender,
-        d.receiver,
-        d.document_type,
-        d.position_type,
-        d.date_created,
-        d.attachment_path,
-        d.note,
-        d.created_at,
+        d.*,
         u.username as created_by_name,
         COALESCE(c.category_name, 'ไม่ระบุหมวดหมู่') as category_name,
         DATE_FORMAT(d.date_created, '%d/%m/%Y') as formatted_date_created,
@@ -193,9 +181,7 @@ try {
     <script>
         $(document).ready(function() {
             $('#assignmentsTable').DataTable({
-                "order": [
-                    [3, "desc"]
-                ],
+                "order": [[8, "desc"]], // Sort by created_by column (index 8) in descending order
                 "pageLength": 10,
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/th.json"

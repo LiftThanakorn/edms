@@ -80,10 +80,13 @@ date_default_timezone_set('Asia/Bangkok'); // ตั้งค่าเขตเ�
         <strong><i class="bi bi-file-earmark-check me-2"></i>อื่น ๆ</strong>
     </div>
 
-
     <!-- เมนู คำขอใบรับรอง -->
     <a href="/edms/certificaterequests/index.php" class="list-group-item list-group-item-action <?php echo (strpos($current_page, '/edms/certificaterequests/index.php') !== false || strpos($current_page, '/edms/certificaterequests/create.php') !== false || strpos($current_page, '/edms/certificaterequests/edit.php') !== false) ? 'active' : ''; ?>">
         <i class="bi bi-file-earmark-text me-2"></i>คำขอใบรับรอง
+    </a>
+        <!-- เมนู ทะเบียนคำขอบัตรประจำตัว -->
+        <a href="/edms/idcardrequests/index.php" class="list-group-item list-group-item-action <?php echo (strpos($current_page, '/edms/idcardrequests/') !== false) ? 'active' : ''; ?>">
+        <i class="bi bi-person-vcard me-2"></i>ทะเบียนคำขอบัตรประจำตัว
     </a>
 </div>
 

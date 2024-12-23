@@ -22,7 +22,7 @@ try {
         FROM edms_internal_out_documents d
         LEFT JOIN edms_users u ON d.created_by = u.user_id
         LEFT JOIN edms_work_categories c ON d.category_id = c.category_id
-        ORDER BY d.document_year DESC, d.document_number DESC
+        ORDER BY d.created_at DESC
     ");
     $stmt->execute();
     $documents = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -145,7 +145,7 @@ try {
     <script>
         $(document).ready(function() {
             $('#documentsTable').DataTable({
-                "order": [[0, "desc"]],
+                "order": [[6, "desc"]], // Sort by created_at column (index 6)
                 "pageLength": 25,
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/th.json"

@@ -18,10 +18,11 @@ try {
     $stmt = $pdo->prepare("
         SELECT d.*, 
                u.username as created_by_name,
-               DATE_FORMAT(d.date_sent, '%d/%m/%Y') as formatted_date_sent
+               DATE_FORMAT(d.date_sent, '%d/%m/%Y') as formatted_date_sent,
+               DATE_FORMAT(d.created_at, '%d/%m/%Y %H:%i') as formatted_created_at
         FROM edms_circular_documents d
         LEFT JOIN edms_users u ON d.created_by = u.user_id
-        ORDER BY d.document_year DESC, d.document_number DESC
+        ORDER BY d.created_at DESC
     ");
     $stmt->execute();
     $documents = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -89,6 +90,7 @@ try {
                                         <th class="text-center">ชื่อเรื่อง</th>
                                         <th class="text-center">หมายเหตุ</th>
                                         <th class="text-center" style="width: 5%">ไฟล์</th>
+                                        <th class="text-center" style="width: 10%">วันที่สร้าง</th>
                                         <?php if ($is_admin): ?>
                                             <th class="text-center" style="width: 10%">จัดการ</th>
                                         <?php endif; ?>
@@ -113,6 +115,7 @@ try {
                                                     </a>
                                                 <?php endif; ?>
                                             </td>
+                                            <td class="text-center"><?php echo $document['formatted_created_at']; ?></td>
                                             <?php if ($is_admin): ?>
                                                 <td class="text-center">
                                                     <div class="btn-group" role="group">
@@ -150,21 +153,13 @@ try {
     <script>
         $(document).ready(function() {
             $('#documentsTable').DataTable({
-                "order": [
-                    [0, "desc"]
-                ],
+                "order": [[8, "desc"]], // Sort by created_at column
                 "pageLength": 25,
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/th.json"
                 },
                 "responsive": true,
-                "dom": "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
-                    "<'row'<'col-sm-12'tr>>" +
-                    "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
-                "lengthMenu": [
-                    [10, 25, 50, -1],
-                    [10, 25, 50, "ทั้งหมด"]
-                ]
+                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "ทั้งหมด"]]
             });
         });
     </script>

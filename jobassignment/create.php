@@ -1,6 +1,10 @@
 <?php
 session_start();
 
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
 // ตรวจสอบการเข้าสู่ระบบ
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../login.php");
@@ -83,6 +87,12 @@ if (isset($_POST['action']) && $_POST['action'] === 'get_next_number') {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['action'])) {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        $_SESSION['message'] = 'Invalid CSRF token';
+        $_SESSION['message_type'] = 'danger';
+        header('Location: index.php');
+        exit();
+    }
     try {
         $document_type = $_POST['document_type'];
         $position_type = $_POST['position_type'];
@@ -148,6 +158,8 @@ $current_year = date('Y') + 543; // แปลงเป็น พ.ศ.
 <head>
     <?php require_once '../components/header.php'; ?>
     <title>เพิมทะเบียนรับ - ส่ง</title>
+    <!-- Add Thai datepicker CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -172,7 +184,19 @@ $current_year = date('Y') + 543; // แปลงเป็น พ.ศ.
                         <h4 class="mb-0">เพิ่มทะเบียนรับ - ส่ง งานกำหนดตำแหน่ง</h4>
                     </div>
                     <div class="card-body">
-                        <form action="" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        <?php if (isset($_SESSION['message'])): ?>
+                            <div class="alert alert-<?php echo $_SESSION['message_type']; ?> alert-dismissible fade show">
+                                <?php 
+                                    echo htmlspecialchars($_SESSION['message']); 
+                                    unset($_SESSION['message']);
+                                    unset($_SESSION['message_type']);
+                                ?>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        <?php endif; ?>
+                        <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+                            <!-- เพิ่ม CSRF token -->
+                            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                             <div class="row g-3">
                                 <!-- ฟอร์มด้านซ้าย -->
                                 <div class="col-md-6">
@@ -188,12 +212,14 @@ $current_year = date('Y') + 543; // แปลงเป็น พ.ศ.
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">วันที่อ้างอิงหนังสือ</label>
-                                        <input type="date" name="reference_date" id="reference_date" class="form-control" disabled>
+                                        <input type="text" name="reference_date" id="reference_date" class="form-control datepicker"
+                                            value="<?php echo date('d/m/Y'); ?>" disabled>
                                         <div class="form-text">สามารถกรอกได้เฉพาะเมื่อประเภทเอกสารเป็น "รับ" เท่านั้น</div>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">ชื่อเรื่อง</label>
-                                        <input type="text" name="title" class="form-control" required>
+                                        <input type="text" name="title" class="form-control" 
+       value="<?php echo isset($_POST['title']) ? htmlspecialchars($_POST['title']) : ''; ?>" required>
                                         <div class="invalid-feedback">กรุณากรอกชื่อเรื่อง</div>
                                     </div>
                                     <div class="mb-3">
@@ -245,14 +271,16 @@ $current_year = date('Y') + 543; // แปลงเป็น พ.ศ.
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">วันที่สร้าง</label>
-                                        <input type="date" name="date_created" class="form-control"
-                                            value="<?php echo date('Y-m-d'); ?>" required>
+                                        <input type="text" name="date_created" class="form-control datepicker"
+                                            value="<?php echo date('d/m/Y'); ?>" required>
                                         <div class="invalid-feedback">กรุณาเลือกวันที่</div>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">ไฟล์แนบ (PDF เท่านั้น, ไม่เกิน 5MB)</label>
-                                        <input type="file" name="attachment" class="form-control" accept=".pdf">
-                                        <div class="form-text">รองรับเฉพาะไฟล์ PDF ขนาดไม่เกิน 5MB</div>
+                                        <input type="file" name="attachment" class="form-control" 
+                                               accept=".pdf" 
+                                               data-max-size="5242880">
+                                        <div class="invalid-feedback">กรุณาเลือกไฟล์ PDF ขนาดไม่เกิน 5MB</div>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">ผู้สร้าง</label>
@@ -281,151 +309,156 @@ $current_year = date('Y') + 543; // แปลงเป็น พ.ศ.
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // เลือก elements ที่ต้องการใช้งาน
-            const documentTypeSelect = document.getElementById('document_type');
-            const positionTypeSelect = document.getElementById('position_type');
-            const documentDisplay = document.getElementById('document_display');
+document.addEventListener('DOMContentLoaded', function() {
+    // Element selections
+    const documentTypeSelect = document.getElementById('document_type');
+    const positionTypeSelect = document.getElementById('position_type');
+    const documentDisplay = document.getElementById('document_display');
+    const documentReferenceInput = document.getElementById('document_reference_number');
+    const referenceDateInput = document.getElementById('reference_date');
+    const form = document.querySelector('form.needs-validation');
 
-            // ฟังก์ชันอัพเดทเลขที่เอกสาร
-            async function updateDocumentNumber() {
-                const documentType = documentTypeSelect.value;
-                const positionType = positionTypeSelect.value;
+    // Update document number and reference fields
+    async function updateDocumentNumber() {
+        const documentType = documentTypeSelect.value;
+        const positionType = positionTypeSelect.value;
 
-                // ตรวจสอบว่ามีการเลือกทั้งสองค่าแล้ว
-                if (documentType && positionType) {
-                    try {
-                        const formData = new FormData();
-                        formData.append('action', 'get_next_number');
-                        formData.append('document_type', documentType);
-                        formData.append('position_type', positionType);
+        // Toggle reference fields
+        if (documentType === 'รับ') {
+            documentReferenceInput.disabled = false;
+            referenceDateInput.disabled = false;
+        } else {
+            documentReferenceInput.disabled = true;
+            referenceDateInput.disabled = true;
+            documentReferenceInput.value = '';
+            referenceDateInput.value = '';
+        }
 
-                        const response = await fetch('', {
-                            method: 'POST',
-                            body: formData
-                        });
+        // Update document number
+        if (documentType && positionType) {
+            try {
+                const formData = new FormData();
+                formData.append('action', 'get_next_number');
+                formData.append('document_type', documentType);
+                formData.append('position_type', positionType);
 
-                        if (!response.ok) {
-                            throw new Error('เกิดข้อผิดพลาดในการดึงข้อมูล');
-                        }
+                const response = await fetch('', {
+                    method: 'POST',
+                    body: formData
+                });
 
-                        const data = await response.json();
-                        documentDisplay.value = `${data.next_number}/${data.year}`;
-                    } catch (error) {
-                        console.error('Error:', error);
-                        documentDisplay.value = '-/<?php echo $current_year; ?>';
-                    }
-                } else {
-                    // ถ้ายังเลือกไม่ครบ ให้แสดงเครื่องหมาย -
-                    documentDisplay.value = '-/<?php echo $current_year; ?>';
-                }
+                if (!response.ok) throw new Error('เกิดข้อผิดพลาดในการดึงข้อมูล');
+
+                const data = await response.json();
+                documentDisplay.value = `${data.next_number}/${data.year}`;
+            } catch (error) {
+                console.error('Error:', error);
+                documentDisplay.value = '-/<?php echo $current_year; ?>';
             }
+        } else {
+            documentDisplay.value = '-/<?php echo $current_year; ?>';
+        }
+    }
 
-            // เพิ่ม event listeners สำหรับ select boxes
-            documentTypeSelect.addEventListener('change', updateDocumentNumber);
-            positionTypeSelect.addEventListener('change', updateDocumentNumber);
+    // Event listeners
+    documentTypeSelect.addEventListener('change', updateDocumentNumber);
+    positionTypeSelect.addEventListener('change', updateDocumentNumber);
 
-            // ตรวจสอบ form validation
-            const form = document.querySelector('form.needs-validation');
-            form.addEventListener('submit', function(event) {
-                if (!form.checkValidity()) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-                form.classList.add('was-validated');
-            }, false);
+    // Form validation
+    form.addEventListener('submit', function(event) {
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
 
-            // เรียกฟังก์ชันครั้งแรกเพื่อตั้งค่าเริ่มต้น
-            updateDocumentNumber();
+        // Validate reference fields if document type is 'รับ'
+        if (documentTypeSelect.value === 'รับ') {
+            if (!documentReferenceInput.value.trim()) {
+                event.preventDefault();
+                documentReferenceInput.setCustomValidity('กรุณากรอกเลขที่อ้างอิงหนังสือ');
+            } else {
+                documentReferenceInput.setCustomValidity('');
+            }
+        }
+
+        form.classList.add('was-validated');
+    });
+
+    // Initialize datepicker
+    $('.datepicker').datepicker({
+        format: 'dd/mm/yyyy',
+        autoclose: true,
+        todayBtn: true,
+        language: 'th',
+        thaiyear: true
+    });
+
+    // Convert dates on form submit
+    $('form').on('submit', function() {
+        $('.datepicker').each(function() {
+            let dateThai = $(this).val();
+            if (dateThai) {
+                let dateParts = dateThai.split('/');
+                let dateEng = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+                $(this).val(dateEng);
+            }
         });
+    });
 
-        document.addEventListener('DOMContentLoaded', function() {
-            // เลือก elements ที่ต้องการใช้งาน
-            const documentTypeSelect = document.getElementById('document_type');
-            const positionTypeSelect = document.getElementById('position_type');
-            const documentDisplay = document.getElementById('document_display');
-            const documentReferenceInput = document.getElementById('document_reference_number');
-            const referenceDateInput = document.getElementById('reference_date');
+    // Initial setup
+    updateDocumentNumber();
+});
 
-            // ฟังก์ชันอัพเดทเลขที่เอกสารและจัดการฟิลด์เลขที่อ้างอิง
-            async function updateDocumentNumber() {
-                const documentType = documentTypeSelect.value;
-                const positionType = positionTypeSelect.value;
+// เพิ่มการตรวจสอบขนาดไฟล์
+const fileInput = document.querySelector('input[type="file"]');
+fileInput.addEventListener('change', function() {
+    if (this.files[0]) {
+        if (this.files[0].size > parseInt(this.dataset.maxSize)) {
+            this.setCustomValidity('ไฟล์มีขนาดใหญ่เกิน 5MB');
+        } else {
+            this.setCustomValidity('');
+        }
+    }
+});
 
-                // จัดการการแสดงผลของ document_reference_number และ reference_date
-                if (documentType === 'รับ') {
-                    documentReferenceInput.disabled = false;
-                    referenceDateInput.disabled = false;
-                    documentReferenceInput.value = documentReferenceInput.value || '';
-                    referenceDateInput.value = referenceDateInput.value || '';
-                } else {
-                    documentReferenceInput.disabled = true;
-                    referenceDateInput.disabled = true;
-                    documentReferenceInput.value = '';
-                    referenceDateInput.value = '';
-                }
-
-                // ตรวจสอบว่ามีการเลือกทั้งสองค่าแล้ว
-                if (documentType && positionType) {
-                    try {
-                        const formData = new FormData();
-                        formData.append('action', 'get_next_number');
-                        formData.append('document_type', documentType);
-                        formData.append('position_type', positionType);
-
-                        const response = await fetch('', {
-                            method: 'POST',
-                            body: formData
-                        });
-
-                        if (!response.ok) {
-                            throw new Error('เกิดข้อผิดพลาดในการดึงข้อมูล');
-                        }
-
-                        const data = await response.json();
-                        documentDisplay.value = `${data.next_number}/${data.year}`;
-                    } catch (error) {
-                        console.error('Error:', error);
-                        documentDisplay.value = '-/<?php echo $current_year; ?>';
-                    }
-                } else {
-                    documentDisplay.value = '-/<?php echo $current_year; ?>';
-                }
+// แปลงรูปแบบวันที่ให้ถูกต้องก่อนส่งฟอร์ม
+$('form').on('submit', function(e) {
+    $('.datepicker').each(function() {
+        try {
+            let dateThai = $(this).val();
+            if (dateThai) {
+                let [day, month, year] = dateThai.split('/');
+                let dateEng = `${year}-${month.padStart(2,'0')}-${day.padStart(2,'0')}`;
+                $(this).val(dateEng);
             }
+        } catch(err) {
+            e.preventDefault();
+            console.error('Date conversion error:', err);
+        }
+    });
+});
+</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.th.min.js"></script>
+    <script>
+        $('.datepicker').datepicker({
+            format: 'dd/mm/yyyy',
+            autoclose: true,
+            todayBtn: true,
+            language: 'th',
+            thaiyear: true
+        }).datepicker("setDate", new Date());  // Set default to today
 
-            // เพิ่ม event listeners
-            documentTypeSelect.addEventListener('change', updateDocumentNumber);
-            positionTypeSelect.addEventListener('change', updateDocumentNumber);
-
-            // Form validation
-            form.addEventListener('submit', function(event) {
-                if (!form.checkValidity()) {
-                    event.preventDefault();
-                    event.stopPropagation();
+        // Convert date format before form submission
+        $('form').on('submit', function() {
+            $('.datepicker').each(function() {
+                let dateThai = $(this).val();
+                if (dateThai) {
+                    let dateParts = dateThai.split('/');
+                    let dateEng = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+                    $(this).val(dateEng);
                 }
-
-                const documentType = documentTypeSelect.value;
-                if (documentType === 'รับ') {
-                    if (!documentReferenceInput.value.trim()) {
-                        event.preventDefault();
-                        documentReferenceInput.setCustomValidity('กรุณากรอกเลขที่อ้างอิงหนังสือ');
-                    } else {
-                        documentReferenceInput.setCustomValidity('');
-                    }
-
-                    if (!referenceDateInput.value) {
-                        event.preventDefault();
-                        referenceDateInput.setCustomValidity('กรุณากรอกวันที่อ้างอิงหนังสือ');
-                    } else {
-                        referenceDateInput.setCustomValidity('');
-                    }
-                }
-
-                form.classList.add('was-validated');
-            }, false);
-
-            // เรียกฟังก์ชันครั้งแรกเพื่อตั้งค่าเริ่มต้น
-            updateDocumentNumber();
+            });
         });
     </script>
 </body>
