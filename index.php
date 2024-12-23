@@ -24,17 +24,23 @@ $command_count_query = "SELECT COUNT(*) FROM edms_command_documents";
 $id_card_count_query = "SELECT COUNT(*) FROM edms_id_card_requests";
 $certificate_count_query = "SELECT COUNT(*) FROM edms_certificate_requests";
 
-// Replace category stats query
+// Add new query after existing queries
+$job_assignment_count_query = "SELECT COUNT(*) FROM edms_job_assignment_documents";
+$job_assignment_count = $pdo->query($job_assignment_count_query)->fetchColumn();
+
+// Update category stats query
 $category_stats_query = "
     SELECT 
         c.category_name,
         COUNT(DISTINCT d1.document_id) + 
         COUNT(DISTINCT d2.document_id) + 
-        COUNT(DISTINCT d3.document_id) as total_documents
+        COUNT(DISTINCT d3.document_id) +
+        COUNT(DISTINCT d4.assignment_id) as total_documents
     FROM edms_work_categories c
     LEFT JOIN edms_internal_in_documents d1 ON c.category_id = d1.category_id
     LEFT JOIN edms_internal_out_documents d2 ON c.category_id = d2.category_id
     LEFT JOIN edms_circular_documents d3 ON c.category_id = d3.category_id
+    LEFT JOIN edms_job_assignment_documents d4 ON c.category_id = d4.category_id
     GROUP BY c.category_id, c.category_name
     ORDER BY total_documents DESC
 ";
@@ -211,6 +217,19 @@ $certificate_count = $pdo->query($certificate_count_query)->fetchColumn();
                         </a>
                     </div>
 
+                    <!-- ทะเบียนการรับ-ส่งงานกำหนดตำแหน่ง -->
+                    <div class="col-md-4">
+                        <a href="jobassignment/index.php" class="text-decoration-none">
+                            <div class="stat-card">
+                                <div class="stat-icon bg-soft-secondary">
+                                    <i class="bi bi-graph-up-arrow"></i>
+                                </div>
+                                <div class="stat-label">ทะเบียนการรับ-ส่งงานกำหนดตำแหน่ง</div>
+                                <div class="stat-number"><?php echo number_format($job_assignment_count); ?></div>
+                            </div>
+                        </a>
+                    </div>
+
                     <!-- หนังสือรับเข้าภายนอก 
                     <div class="col-md-4">
                         <a href="external_in/index.php" class="text-decoration-none">
@@ -292,7 +311,8 @@ $certificate_count = $pdo->query($certificate_count_query)->fetchColumn();
                 'หนังสือส่งออกภายใน',
                 'หนังสือเวียน',
                 'คำขอบัตรประจำตัว',
-                'คำขอหนังสือรับรอง'
+                'คำขอหนังสือรับรอง',
+                'ทะเบียนการรับ-ส่งงานกำหนดตำแหน่ง'
             ],
             datasets: [{
                 data: [
@@ -300,14 +320,16 @@ $certificate_count = $pdo->query($certificate_count_query)->fetchColumn();
                     <?php echo $internal_out_count; ?>,
                     <?php echo $circular_count; ?>,
                     <?php echo $id_card_count; ?>,
-                    <?php echo $certificate_count; ?>
+                    <?php echo $certificate_count; ?>,
+                    <?php echo $job_assignment_count; ?>
                 ],
                 backgroundColor: [
-                    'rgba(25, 135, 84, 0.9)',   
-                    'rgba(25, 135, 84, 0.7)',   
-                    'rgba(13, 110, 253, 0.9)',
-                    'rgba(255, 193, 7, 0.9)',
-                    'rgba(255, 193, 7, 0.7)'
+                    'rgba(52, 191, 163, 1)',   // มิ้นต์ - รับเข้า
+                    'rgba(114, 223, 201, 0.9)', // มิ้นต์อ่อน - ส่งออก
+                    'rgba(72, 110, 255, 1)',    // น้ำเงิน - เวียน
+                    'rgba(255, 180, 0, 1)',     // ส้ม - บัตร
+                    'rgba(255, 207, 86, 0.9)',  // เหลือง - รับรอง
+                    'rgba(153, 102, 255, 1)'    // ม่วง - มอบหมายงาน
                 ],
                 borderWidth: 0
             }]
@@ -332,7 +354,7 @@ $certificate_count = $pdo->query($certificate_count_query)->fetchColumn();
         }
     });
 
-    // กราฟแท่งเปรียบเทียบเอกสารภายใน/ภายนอก
+    // Update bar chart code
     const ctx2 = document.getElementById('documentTypesChart').getContext('2d');
     new Chart(ctx2, {
         type: 'bar',
@@ -353,7 +375,17 @@ $certificate_count = $pdo->query($certificate_count_query)->fetchColumn();
                     }
                     ?>
                 ],
-                backgroundColor: 'rgba(25, 135, 84, 0.8)'
+                backgroundColor: [
+                    'rgba(52, 191, 163, 1)',    // มิ้นต์
+                    'rgba(72, 110, 255, 1)',    // น้ำเงิน
+                    'rgba(255, 180, 0, 1)',     // ส้ม
+                    'rgba(153, 102, 255, 1)',   // ม่วง
+                    'rgba(255, 99, 132, 1)',    // ชมพู
+                    'rgba(75, 192, 192, 1)',    // ฟ้า
+                    'rgba(255, 159, 64, 1)'     // ส้มอ่อน
+                ],
+                borderWidth: 0,
+                borderRadius: 6
             }]
         },
         options: {
@@ -385,8 +417,7 @@ $certificate_count = $pdo->query($certificate_count_query)->fetchColumn();
                     }
                 }
             },
-            barThickness: 25,
-            borderRadius: 6
+            barThickness: 25
         }
     });
     </script>
