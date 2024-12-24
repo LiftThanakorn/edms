@@ -62,7 +62,7 @@ try {
                     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                         <h4 class="mb-0">ทะเบียนคำขอหนังสือรับรอง</h4>
                         <a href="create.php" class="btn btn-light">
-                            <i class="bi bi-plus-lg"></i> สร้างคำขอหนังสือรับรอง
+                            <i class="bi bi-plus-lg"></i> เพิ่มคำขอหนังสือรับรอง
                         </a>
                     </div>
                     <div class="card-body">
@@ -150,7 +150,7 @@ try {
                 "order": [
                     [0, "desc"]
                 ],
-                "pageLength": 25,
+                "pageLength": 10,
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/th.json"
                 },

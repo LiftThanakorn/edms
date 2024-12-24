@@ -133,11 +133,6 @@ $current_year = date('Y') + 543;
                                         <input type="text" class="form-control" value="<?php echo "$next_number/$current_year"; ?>" readonly>
                                     </div>
 
-                                    <div class="mb-3">
-                                        <label class="form-label">ชื่อผู้ยื่นคำขอ</label>
-                                        <input type="text" name="applicant_name" class="form-control" required>
-                                        <div class="invalid-feedback">กรุณากรอกชื่อผู้ยื่นคำขอ</div>
-                                    </div>
 
                                     <div class="mb-3">
                                         <label class="form-label">วันที่ยื่นคำขอ</label>
@@ -145,19 +140,23 @@ $current_year = date('Y') + 543;
                                                value="<?php echo date('d/m/Y'); ?>" required>
                                         <div class="invalid-feedback">กรุณาเลือกวันที่</div>
                                     </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">ไฟล์แนบ (PDF เท่านั้น, ไม่เกิน 5MB)</label>
-                                        <input type="file" name="attachment" class="form-control" 
-                                               accept=".pdf" data-max-size="5242880">
-                                        <div class="invalid-feedback">กรุณาเลือกไฟล์ PDF ขนาดไม่เกิน 5MB</div>
-                                    </div>
-
                                     <div class="mb-3">
                                         <label class="form-label">หมายเหตุ</label>
-                                        <textarea name="note" class="form-control" rows="4"></textarea>
+                                        <textarea name="note" class="form-control" rows="3" placeholder="กรุณากรอกหมายเหตุ (ถ้ามี)"></textarea>
+                                    </div>
+                                </div>
+                                
+                                <!-- ฟอร์มด้านขวา -->
+                                <div class="col-md-6">
+                                <div class="mb-3">
+                                        <label class="form-label">ผู้ยื่นคำขอ</label>
+                                        <input type="text" name="applicant_name" class="form-control" required>
+                                        <div class="invalid-feedback">กรุณากรอกชื่อผู้ยื่นคำขอ</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">ไฟล์แนบ (PDF เท่านั้น, ไม่เกิน 5MB)</label>
+                                        <input type="file" name="attachment" class="form-control" accept=".pdf">
+                                        <div class="form-text">รองรับเฉพาะไฟล์ PDF ขนาดไม่เกิน 5MB</div>
                                     </div>
                                 </div>
                             </div>

@@ -30,6 +30,7 @@ try {
 
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <?php require_once '../components/header.php'; ?>
     <title>ทะเบียนคำขอบัตรประจำตัว</title>
@@ -38,7 +39,7 @@ try {
 
 <body>
     <?php require_once '../components/navbar.php'; ?>
-    
+
     <div class="container mt-4">
         <div class="row">
             <div class="col-md-3">
@@ -62,10 +63,10 @@ try {
                     <div class="card-body">
                         <?php if (isset($_SESSION['message'])): ?>
                             <div class="alert alert-<?php echo $_SESSION['message_type']; ?> alert-dismissible fade show">
-                                <?php 
-                                    echo htmlspecialchars($_SESSION['message']); 
-                                    unset($_SESSION['message']);
-                                    unset($_SESSION['message_type']);
+                                <?php
+                                echo htmlspecialchars($_SESSION['message']);
+                                unset($_SESSION['message']);
+                                unset($_SESSION['message_type']);
                                 ?>
                                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                             </div>
@@ -74,7 +75,7 @@ try {
                         <div class="table-responsive">
                             <table id="requestsTable" class="table table-bordered table-striped table-hover">
                                 <thead class="table-primary">
-                                    <tr class="text-center">
+                                    <tr>
                                         <th>เลขที่คำขอ</th>
                                         <th>ชื่อผู้ยื่นคำขอ</th>
                                         <th>วันที่ยื่นคำขอ</th>
@@ -82,7 +83,7 @@ try {
                                         <th>ไฟล์แนบ</th>
                                         <th>ผู้สร้าง</th>
                                         <?php if ($is_admin): ?>
-                                            <th>จัดการ</th>
+                                            <th class="text-center" style="width: 5%"><i class="bi bi-gear"></i></th>
                                         <?php endif; ?>
                                     </tr>
                                 </thead>
@@ -108,13 +109,13 @@ try {
                                             <?php if ($is_admin): ?>
                                                 <td class="text-center">
                                                     <div class="btn-group">
-                                                        <a href="edit.php?id=<?php echo $request['request_id']; ?>" 
-                                                           class="btn btn-warning btn-sm">
+                                                        <a href="edit.php?id=<?php echo $request['request_id']; ?>"
+                                                            class="btn btn-warning btn-sm">
                                                             <i class="bi bi-pencil"></i>
                                                         </a>
-                                                        <a href="delete.php?id=<?php echo $request['request_id']; ?>" 
-                                                           class="btn btn-danger btn-sm"
-                                                           onclick="return confirm('คุณแน่ใจหรือไม่ว่าต้องการลบ?');">
+                                                        <a href="delete.php?id=<?php echo $request['request_id']; ?>"
+                                                            class="btn btn-danger btn-sm"
+                                                            onclick="return confirm('คุณแน่ใจหรือไม่ว่าต้องการลบ?');">
                                                             <i class="bi bi-trash"></i>
                                                         </a>
                                                     </div>
@@ -138,15 +139,21 @@ try {
     <script>
         $(document).ready(function() {
             $('#requestsTable').DataTable({
-                order: [[2, "desc"]],
+                order: [
+                    [2, "desc"]
+                ],
                 pageLength: 10,
                 language: {
                     url: "//cdn.datatables.net/plug-ins/1.13.7/i18n/th.json"
                 },
                 responsive: true,
-                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "ทั้งหมด"]]
+                lengthMenu: [
+                    [10, 25, 50, -1],
+                    [10, 25, 50, "ทั้งหมด"]
+                ]
             });
         });
     </script>
 </body>
+
 </html>

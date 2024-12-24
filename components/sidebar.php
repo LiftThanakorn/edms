@@ -45,17 +45,17 @@ date_default_timezone_set('Asia/Bangkok'); // ตั้งค่าเขตเ�
     <a href="/edms/internal_in/index.php" class="list-group-item list-group-item-action <?php echo (strpos($current_page, '/edms/internal_in/index.php') !== false || strpos($current_page, '/edms/internal_in/create.php') !== false || strpos($current_page, '/edms/internal_in/edit.php') !== false) ? 'active' : ''; ?>">
         <i class="bi bi-inbox me-2"></i>หนังสือรับเข้าภายใน
     </a>
-    <!-- 
-    เมนู หนังสือรับเข้าภายนอก 
+ 
+    <!-- เมนู หนังสือรับเข้าภายนอก  -->
     <a href="/edms/external_in/index.php" class="list-group-item list-group-item-action <?php echo (strpos($current_page, '/edms/external_in/index.php') !== false || strpos($current_page, '/edms/external_in/create.php') !== false || strpos($current_page, '/edms/external_in/edit.php') !== false) ? 'active' : ''; ?>">
-        <i class="bi bi-arrow-down me-2"></i>หนังสือบเข้าภายนอก
+    <i class="bi bi-box-arrow-in-right me-2"></i>หนังสือรับเข้าภายนอก
     </a>
-
+   <!-- 
      เมนู หนังสือส่งออกภายนอก 
     <a href="/edms/external_out/index.php" class="list-group-item list-group-item-action <?php echo (strpos($current_page, '/edms/external_out/index.php') !== false || strpos($current_page, '/edms/external_out/create.php') !== false || strpos($current_page, '/edms/external_out/edit.php') !== false) ? 'active' : ''; ?>">
         <i class="bi bi-arrow-up me-2"></i>หนังสือส่งออกภายนอก
-    </a> 
-    -->
+    </a>   -->
+  
     <!-- เมนู หนังสือเวียน -->
     <a href="/edms/circular/index.php" class="list-group-item list-group-item-action <?php echo (strpos($current_page, '/edms/circular/index.php') !== false || strpos($current_page, '/edms/circular/create.php') !== false || strpos($current_page, '/edms/circular/edit.php') !== false) ? 'active' : ''; ?>">
         <i class="bi bi-repeat me-2"></i>หนังสือเวียน
@@ -82,7 +82,7 @@ date_default_timezone_set('Asia/Bangkok'); // ตั้งค่าเขตเ�
 
     <!-- เมนู คำขอใบรับรอง -->
     <a href="/edms/certificaterequests/index.php" class="list-group-item list-group-item-action <?php echo (strpos($current_page, '/edms/certificaterequests/index.php') !== false || strpos($current_page, '/edms/certificaterequests/create.php') !== false || strpos($current_page, '/edms/certificaterequests/edit.php') !== false) ? 'active' : ''; ?>">
-        <i class="bi bi-file-earmark-text me-2"></i>คำขอใบรับรอง
+        <i class="bi bi-file-earmark-text me-2"></i>ทะเบียนคำขอหนังสือรับรอง
     </a>
         <!-- เมนู ทะเบียนคำขอบัตรประจำตัว -->
         <a href="/edms/idcardrequests/index.php" class="list-group-item list-group-item-action <?php echo (strpos($current_page, '/edms/idcardrequests/') !== false) ? 'active' : ''; ?>">
@@ -111,7 +111,7 @@ date_default_timezone_set('Asia/Bangkok'); // ตั้งค่าเขตเ�
     </div>
     <!-- เมนู แก้ไขรหัสผ่าน -->
     <a href="/edms/edit_password.php" class="list-group-item list-group-item-action <?php echo (strpos($current_page, '/edms/edit_password.php') !== false) ? 'active' : ''; ?>">
-        <i class="bi bi-lock me-2"></i>แก้ไขรหัสผ่าน
+        <i class="bi bi-lock me-2 "></i>แก้ไขรหัสผ่าน
     </a>
 </div>
 

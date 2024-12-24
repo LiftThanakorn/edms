@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 23, 2024 at 06:28 PM
+-- Generation Time: Dec 24, 2024 at 10:18 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -47,8 +47,8 @@ CREATE TABLE `edms_certificate_requests` (
 
 CREATE TABLE `edms_circular_documents` (
   `document_id` int(11) NOT NULL,
-  `document_number` int(11) NOT NULL COMMENT 'เลขที่หนังสือ',
-  `document_year` year(4) NOT NULL DEFAULT year(curdate()),
+  `document_number` int(11) NOT NULL,
+  `document_year` year(4) NOT NULL,
   `title` varchar(255) NOT NULL,
   `sender` varchar(255) NOT NULL,
   `receiver` varchar(255) DEFAULT NULL,
@@ -56,7 +56,7 @@ CREATE TABLE `edms_circular_documents` (
   `attachment_path` varchar(255) DEFAULT NULL,
   `note` text DEFAULT NULL,
   `category_id` int(11) DEFAULT NULL,
-  `created_by` int(11) DEFAULT NULL,
+  `created_by` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
@@ -68,8 +68,8 @@ CREATE TABLE `edms_circular_documents` (
 
 CREATE TABLE `edms_command_documents` (
   `document_id` int(11) NOT NULL,
-  `document_number` int(11) NOT NULL COMMENT 'เลขที่หนังสือ',
-  `document_year` year(4) NOT NULL DEFAULT year(curdate()),
+  `document_number` int(11) NOT NULL,
+  `document_year` year(4) NOT NULL,
   `title` varchar(255) NOT NULL,
   `sender` varchar(255) NOT NULL,
   `receiver` varchar(255) DEFAULT NULL,
@@ -77,7 +77,7 @@ CREATE TABLE `edms_command_documents` (
   `attachment_path` varchar(255) DEFAULT NULL,
   `note` text DEFAULT NULL,
   `category_id` int(11) DEFAULT NULL,
-  `created_by` int(11) DEFAULT NULL,
+  `created_by` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
@@ -89,17 +89,19 @@ CREATE TABLE `edms_command_documents` (
 
 CREATE TABLE `edms_external_in_documents` (
   `document_id` int(11) NOT NULL,
-  `document_number` int(11) NOT NULL COMMENT 'เลขที่หนังสือ',
-  `document_year` year(4) NOT NULL DEFAULT year(curdate()),
+  `document_number` int(11) NOT NULL,
+  `document_year` year(4) NOT NULL,
   `title` varchar(255) NOT NULL,
   `sender` varchar(255) NOT NULL,
   `receiver` varchar(255) DEFAULT NULL,
   `date_received` date NOT NULL,
   `attachment_path` varchar(255) DEFAULT NULL,
+  `note` text DEFAULT NULL,
   `category_id` int(11) DEFAULT NULL,
-  `created_by` int(11) DEFAULT NULL,
+  `created_by` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `note` text DEFAULT NULL
+  `document_reference_number` varchar(100) DEFAULT NULL COMMENT 'เลขที่หนังสือ',
+  `date_signed` date DEFAULT NULL COMMENT 'วันที่ลงในหนังสือ'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- --------------------------------------------------------
@@ -110,17 +112,17 @@ CREATE TABLE `edms_external_in_documents` (
 
 CREATE TABLE `edms_external_out_documents` (
   `document_id` int(11) NOT NULL,
-  `document_number` int(11) NOT NULL COMMENT 'เลขที่หนังสือ',
-  `document_year` year(4) NOT NULL DEFAULT year(curdate()),
+  `document_number` int(11) NOT NULL,
+  `document_year` year(4) NOT NULL,
   `title` varchar(255) NOT NULL,
   `sender` varchar(255) NOT NULL,
   `receiver` varchar(255) DEFAULT NULL,
   `date_created` date NOT NULL,
   `attachment_path` varchar(255) DEFAULT NULL,
+  `note` text DEFAULT NULL,
   `category_id` int(11) DEFAULT NULL,
-  `created_by` int(11) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `note` text DEFAULT NULL
+  `created_by` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- --------------------------------------------------------
@@ -149,19 +151,19 @@ CREATE TABLE `edms_id_card_requests` (
 
 CREATE TABLE `edms_internal_in_documents` (
   `document_id` int(11) NOT NULL,
-  `document_number` int(11) NOT NULL COMMENT 'เลขทะเบียนรับ',
-  `document_year` year(4) NOT NULL COMMENT 'ปีของหนังสือ',
-  `document_reference_number` varchar(50) NOT NULL COMMENT 'เลขที่หนังสือ',
-  `title` varchar(255) NOT NULL COMMENT 'ชื่อเรื่อง',
-  `sender` varchar(255) NOT NULL COMMENT 'ผู้ส่ง',
-  `receiver` varchar(255) DEFAULT NULL COMMENT 'ผู้รับ',
-  `date_received` date NOT NULL COMMENT 'วันที่รับ',
-  `attachment_path` varchar(255) DEFAULT NULL COMMENT 'ไฟล์แนบ',
+  `document_number` varchar(20) NOT NULL,
+  `document_year` year(4) NOT NULL,
+  `document_reference_number` varchar(50) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `sender` varchar(255) NOT NULL,
+  `receiver` varchar(255) DEFAULT NULL,
+  `date_received` date NOT NULL,
+  `attachment_path` varchar(255) DEFAULT NULL,
   `note` text DEFAULT NULL,
-  `category_id` int(11) DEFAULT NULL COMMENT 'หมวดหมู่งาน',
-  `created_by` int(11) NOT NULL COMMENT 'ผู้สร้าง',
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp() COMMENT 'เวลาที่สร้างเอกสาร',
-  `date_signed` date DEFAULT NULL COMMENT 'ลงวันที่'
+  `category_id` int(11) DEFAULT NULL,
+  `created_by` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `date_signed` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- --------------------------------------------------------
@@ -172,8 +174,8 @@ CREATE TABLE `edms_internal_in_documents` (
 
 CREATE TABLE `edms_internal_out_documents` (
   `document_id` int(11) NOT NULL,
-  `document_number` int(11) NOT NULL COMMENT 'เลขที่หนังสือ',
-  `document_year` year(4) NOT NULL DEFAULT year(curdate()),
+  `document_number` int(11) NOT NULL,
+  `document_year` year(4) NOT NULL,
   `title` varchar(255) NOT NULL,
   `sender` varchar(255) NOT NULL,
   `receiver` varchar(255) DEFAULT NULL,
@@ -181,9 +183,20 @@ CREATE TABLE `edms_internal_out_documents` (
   `attachment_path` varchar(255) DEFAULT NULL,
   `note` text DEFAULT NULL,
   `category_id` int(11) DEFAULT NULL,
-  `created_by` int(11) DEFAULT NULL,
+  `created_by` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Dumping data for table `edms_internal_out_documents`
+--
+
+INSERT INTO `edms_internal_out_documents` (`document_id`, `document_number`, `document_year`, `title`, `sender`, `receiver`, `date_created`, `attachment_path`, `note`, `category_id`, `created_by`, `created_at`) VALUES
+(1, 1001, '2024', 'รายงานการประชุมประจำเดือนครั้งที่ 1/2567 เรื่องการพัฒนาระบบการจัดการภายในองค์กรและการจัดทำแผนกลยุทธ์สำหรับปี 2567', 'admin', 'อธิการบดี', '2024-01-10', 'meeting_report_01.pdf', '', 1, 1, '2024-01-11 03:00:00'),
+(2, 1002, '2024', 'ใบแจ้งหนี้ค่าบริการสำหรับการใช้บริการระบบสารสนเทศสำหรับปี 2567 รวมถึงค่าบำรุงรักษาและค่าอัพเกรดระบบต่างๆ ที่มีผลต่อการดำเนินงานขององค์กร', 'admin', 'ผู้อำนวยการฝ่ายการเงิน', '2024-02-15', 'invoice_01.pdf', '', 2, 1, '2024-02-16 04:30:00'),
+(3, 1003, '2024', 'การประเมินผลการทำงานของบุคลากรในแต่ละแผนกเพื่อการปรับปรุงประสิทธิภาพและประสิทธิผลของการดำเนินงานภายในองค์กรตามเกณฑ์ที่กำหนด', 'admin', 'อาจารย์ ดร.สมชาย ศรีวัฒน์', '2024-03-05', 'evaluation_report_01.pdf', 'ส่งเอกสารตามคำขอ', 3, 1, '2024-03-06 07:45:00'),
+(4, 1004, '2024', 'หนังสือแจ้งการอนุมัติทุนการศึกษาสำหรับนักศึกษาที่ผ่านการคัดเลือกในปีการศึกษา 2567 รวมถึงรายละเอียดเกี่ยวกับเงื่อนไขและวิธีการยื่นขอทุน', 'admin', 'นักศึกษา พัฒนาการ', '2024-04-20', 'scholarship_approval.pdf', 'อนุมัติทุนการศึกษาให้แก่ผู้สมัคร', 4, 1, '2024-04-21 02:00:00'),
+(5, 1005, '2024', 'คำสั่งย้ายบุคลากรจากแผนกการเงินไปยังแผนกการบัญชีเพื่อรองรับการปรับโครงสร้างองค์กรและเพิ่มประสิทธิภาพการทำงานในระยะยาว', 'admin', 'ผู้อำนวยการฝ่ายบุคลากร', '2024-05-01', 'transfer_order.pdf', 'ย้ายบุคลากรตามคำสั่ง', 5, 1, '2024-05-02 08:30:00');
 
 -- --------------------------------------------------------
 
@@ -194,6 +207,7 @@ CREATE TABLE `edms_internal_out_documents` (
 CREATE TABLE `edms_job_assignment_documents` (
   `assignment_id` int(11) NOT NULL,
   `document_number` int(11) NOT NULL COMMENT 'เลขที่หนังสือ',
+  `document_reference_number` varchar(50) DEFAULT NULL COMMENT 'เลขที่อ้างอิงหนังสือ',
   `document_year` year(4) NOT NULL DEFAULT year(curdate()),
   `title` varchar(255) NOT NULL,
   `sender` varchar(255) NOT NULL,
@@ -201,13 +215,12 @@ CREATE TABLE `edms_job_assignment_documents` (
   `document_type` enum('รับ','ส่ง','เวียน','สั่งการ') NOT NULL COMMENT 'ประเภทเอกสาร (รับ, ส่ง, เวียน,สั่งการ)',
   `position_type` enum('สายวิชาการ','สายสนับสนุน') NOT NULL COMMENT 'ประเภทตำแหน่ง',
   `date_created` date NOT NULL,
+  `reference_date` date DEFAULT NULL COMMENT 'วันที่อ้างอิงหนังสือ',
   `attachment_path` varchar(255) DEFAULT NULL,
   `note` text DEFAULT NULL,
   `category_id` int(11) DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `document_reference_number` varchar(50) DEFAULT NULL COMMENT 'เลขที่อ้างอิงหนังสือ',
-  `reference_date` date DEFAULT NULL COMMENT 'วันที่อ้างอิงหนังสือ'
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- --------------------------------------------------------
@@ -232,8 +245,7 @@ CREATE TABLE `edms_users` (
 --
 
 INSERT INTO `edms_users` (`user_id`, `username`, `password`, `first_name`, `last_name`, `email`, `role`, `created_at`) VALUES
-(1, 'thanakorn', '$argon2id$v=19$m=65536,t=4,p=1$cG5OYVJGVjB6TWllQVJEYg$PJU6I4QZ8cFlbzDhURxclKjRelsNlOroMJaVz/Bk2pI', 'thanakorn', 'inthaphan', 'test@123.com', 'user', '2024-12-18 14:25:47'),
-(2, 'admin', '$argon2id$v=19$m=65536,t=4,p=1$enhnZG1mZzBkdHpOeElTaQ$kSiNB46+o1ydn+JxAE7+qtZEbf3bm6MxcloDfWZeB+M', 'admin', 'admin', 'admin@admin.com', 'admin', '2024-12-18 15:34:31');
+(1, 'admin', '$argon2id$v=19$m=65536,t=4,p=1$Y3hMWWEuRHJuVTNieEJhZQ$X2vmd618lqMymr0UZVS+Yc7+O9piXeTBEqG3O6IpnWo', 'admin', 'admin', 'admin@example.com', 'admin', '2024-12-19 01:37:49');
 
 -- --------------------------------------------------------
 
@@ -253,8 +265,12 @@ CREATE TABLE `edms_work_categories` (
 --
 
 INSERT INTO `edms_work_categories` (`category_id`, `category_name`, `description`, `created_at`) VALUES
-(1, 'งานกำหนดตำแหน่งทางวิชาการ', '', '2024-12-18 14:27:57'),
-(2, 'งานกำหนดตำแหน่งที่สูงขึ้น', 'กพส', '2024-12-19 15:07:12');
+(1, 'งานกำหนดตำแหน่งทางวิชาการ', 'กพว', '2024-12-18 19:21:23'),
+(2, 'งานกำหนดตำแหน่งที่สูงขึ้น', 'กพส', '2024-12-18 19:21:31'),
+(3, 'งานสรรหาและบรรจุแต่งตั้ง', '', '2024-12-18 19:21:40'),
+(4, 'งานการเงินและพัสดุ', '', '2024-12-19 20:22:08'),
+(5, 'งานธุรการ สารบรรณ', '', '2024-12-19 20:22:34'),
+(6, 'งานอื่นๆ', '', '2024-12-19 20:20:20');
 
 --
 -- Indexes for dumped tables
@@ -289,7 +305,9 @@ ALTER TABLE `edms_command_documents`
 ALTER TABLE `edms_external_in_documents`
   ADD PRIMARY KEY (`document_id`),
   ADD KEY `category_id` (`category_id`),
-  ADD KEY `created_by` (`created_by`);
+  ADD KEY `created_by` (`created_by`),
+  ADD KEY `idx_document_reference_number` (`document_reference_number`),
+  ADD KEY `idx_date_signed` (`date_signed`);
 
 --
 -- Indexes for table `edms_external_out_documents`
@@ -394,7 +412,7 @@ ALTER TABLE `edms_internal_in_documents`
 -- AUTO_INCREMENT for table `edms_internal_out_documents`
 --
 ALTER TABLE `edms_internal_out_documents`
-  MODIFY `document_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `document_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `edms_job_assignment_documents`
@@ -406,13 +424,13 @@ ALTER TABLE `edms_job_assignment_documents`
 -- AUTO_INCREMENT for table `edms_users`
 --
 ALTER TABLE `edms_users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `edms_work_categories`
 --
 ALTER TABLE `edms_work_categories`
-  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Constraints for dumped tables
@@ -428,29 +446,29 @@ ALTER TABLE `edms_certificate_requests`
 -- Constraints for table `edms_circular_documents`
 --
 ALTER TABLE `edms_circular_documents`
-  ADD CONSTRAINT `edms_circular_documents_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `edms_work_categories` (`category_id`),
-  ADD CONSTRAINT `edms_circular_documents_ibfk_2` FOREIGN KEY (`created_by`) REFERENCES `edms_users` (`user_id`);
+  ADD CONSTRAINT `edms_circular_documents_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `edms_work_categories` (`category_id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `edms_circular_documents_ibfk_2` FOREIGN KEY (`created_by`) REFERENCES `edms_users` (`user_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `edms_command_documents`
 --
 ALTER TABLE `edms_command_documents`
-  ADD CONSTRAINT `edms_command_documents_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `edms_work_categories` (`category_id`),
-  ADD CONSTRAINT `edms_command_documents_ibfk_2` FOREIGN KEY (`created_by`) REFERENCES `edms_users` (`user_id`);
+  ADD CONSTRAINT `edms_command_documents_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `edms_work_categories` (`category_id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `edms_command_documents_ibfk_2` FOREIGN KEY (`created_by`) REFERENCES `edms_users` (`user_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `edms_external_in_documents`
 --
 ALTER TABLE `edms_external_in_documents`
-  ADD CONSTRAINT `edms_external_in_documents_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `edms_work_categories` (`category_id`),
-  ADD CONSTRAINT `edms_external_in_documents_ibfk_2` FOREIGN KEY (`created_by`) REFERENCES `edms_users` (`user_id`);
+  ADD CONSTRAINT `edms_external_in_documents_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `edms_work_categories` (`category_id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `edms_external_in_documents_ibfk_2` FOREIGN KEY (`created_by`) REFERENCES `edms_users` (`user_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `edms_external_out_documents`
 --
 ALTER TABLE `edms_external_out_documents`
-  ADD CONSTRAINT `edms_external_out_documents_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `edms_work_categories` (`category_id`),
-  ADD CONSTRAINT `edms_external_out_documents_ibfk_2` FOREIGN KEY (`created_by`) REFERENCES `edms_users` (`user_id`);
+  ADD CONSTRAINT `edms_external_out_documents_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `edms_work_categories` (`category_id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `edms_external_out_documents_ibfk_2` FOREIGN KEY (`created_by`) REFERENCES `edms_users` (`user_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `edms_id_card_requests`
@@ -469,8 +487,8 @@ ALTER TABLE `edms_internal_in_documents`
 -- Constraints for table `edms_internal_out_documents`
 --
 ALTER TABLE `edms_internal_out_documents`
-  ADD CONSTRAINT `edms_internal_out_documents_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `edms_work_categories` (`category_id`),
-  ADD CONSTRAINT `edms_internal_out_documents_ibfk_2` FOREIGN KEY (`created_by`) REFERENCES `edms_users` (`user_id`);
+  ADD CONSTRAINT `edms_internal_out_documents_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `edms_work_categories` (`category_id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `edms_internal_out_documents_ibfk_2` FOREIGN KEY (`created_by`) REFERENCES `edms_users` (`user_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `edms_job_assignment_documents`

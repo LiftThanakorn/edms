@@ -1,10 +1,10 @@
 <?php
 // config.php
 
-$host = 'localhost';       // เปลี่ยนเป็นที่อยู่ของฐานข้อมูล
-$dbname = 'edms';          // ชื่อฐานข้อมูล
-$username = 'root';        // ชื่อผู้ใช้ฐานข้อมูล
-$password = '';            // รหัสผ่านฐานข้อมูล
+$host = '10.80.2.11';       // เปลี่ยนเป็นที่อยู่ของฐานข้อมูล
+$dbname = 'sql_datapersonne';          // ชื่อฐานข้อมูล
+$username = 'sql_datapersonne';        // ชื่อผู้ใช้ฐานข้อมูล
+$password = 'd6bd2acd05913';            // รหัสผ่านฐานข้อมูล
 
 date_default_timezone_set('Asia/Bangkok');
 

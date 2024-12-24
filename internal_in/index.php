@@ -160,7 +160,7 @@ try {
         $(document).ready(function() {
             $('#documentsTable').DataTable({
                 "order": [[6, "desc"]], // Sort by created_at column (index 6)
-                "pageLength": 25,
+                "pageLength": 10,
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/th.json"
                 },

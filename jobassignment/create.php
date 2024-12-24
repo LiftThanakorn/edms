@@ -175,7 +175,7 @@ $current_year = date('Y') + 543; // แปลงเป็น พ.ศ.
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="/edms/">หน้าหลัก</a></li>
                         <li class="breadcrumb-item"><a href="index.php">ทะเบียนรับ - ส่งงาน กำหนดตำแหน่ง</a></li>
-                        <li class="breadcrumb-item active">เพิมทะเบียนรับ - ส่ง</li>
+                        <li class="breadcrumb-item active">เพิ่มทะเบียนรับ - ส่ง งานกำหนดตำแหน่ง</li>
                     </ol>
                 </nav>
 

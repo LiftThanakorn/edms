@@ -101,7 +101,7 @@ $current_year = date('Y') + 543; // แปลงเป็น พ.ศ.
 
 <head>
     <?php require_once '../components/header.php'; ?>
-    <title>สร้างคำขอหนังสือรับรอง</title>
+    <title>เพิ่มคำขอหนังสือรับรอง</title>
 </head>
 
 <body>
@@ -117,13 +117,13 @@ $current_year = date('Y') + 543; // แปลงเป็น พ.ศ.
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="/edms/">หน้าหลัก</a></li>
                         <li class="breadcrumb-item"><a href="/edms/certificaterequests/">ทะเบียนคำขอหนังสือรับรอง</a></li>
-                        <li class="breadcrumb-item active">สร้างคำขอหนังสือรับรอง</li>
+                        <li class="breadcrumb-item active">เพิ่มคำขอหนังสือรับรอง</li>
                     </ol>
                 </nav>
 
                 <div class="card shadow">
                     <div class="card-header bg-primary text-white">
-                        <h4 class="mb-0">สร้างคำขอหนังสือรับรอง</h4>
+                        <h4 class="mb-0">เพิ่มคำขอหนังสือรับรอง</h4>
                     </div>
                     <div class="card-body">
                         <?php if (isset($_SESSION['message'])): ?>
@@ -160,7 +160,7 @@ $current_year = date('Y') + 543; // แปลงเป็น พ.ศ.
                                 <!-- ฟอร์มด้านขวา -->
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="form-label">ผู้รับ</label>
+                                        <label class="form-label">ผู้ยื่นคำขอ</label>
                                         <input type="text" name="receiver" class="form-control" required>
                                         <div class="invalid-feedback">
                                             กรุณากรอกผู้รับ

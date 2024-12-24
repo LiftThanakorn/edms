@@ -38,9 +38,9 @@ try {
 <head>
     <?php require_once '../components/header.php'; ?>
     <title>ทะเบียนหนังสือเวียน</title>
-    <!-- DataTables CSS with Bootstrap 5 -->
-    <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
-    <link href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css" rel="stylesheet">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
 </head>
 
 <body>
@@ -145,21 +145,27 @@ try {
     </div>
 
     <!-- รวม JS ของ DataTables -->
-    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
 
     <!-- การเปิดใช้งาน DataTables -->
     <script>
         $(document).ready(function() {
             $('#documentsTable').DataTable({
-                "order": [[8, "desc"]], // Sort by created_at column
-                "pageLength": 25,
+                "order": [[7, "desc"]], // เรียงตามคอลัมน์วันที่สร้าง (index 7)
+                "pageLength": 10,
+                "dom": '<"top"lf>rt<"bottom"ip><"clear">',
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/th.json"
                 },
                 "responsive": true,
-                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "ทั้งหมด"]]
+                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "ทั้งหมด"]],
+                "initComplete": function(settings, json) {
+                    console.log('DataTable has been initialized');
+                }
             });
         });
     </script>

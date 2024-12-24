@@ -38,6 +38,14 @@ try {
     <?php require_once '../components/header.php'; ?>
     <title>ทะเบียนหนังสือส่งออกภายใน</title>
     <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <style>
+        .text-truncate-cell {
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
 </head>
 <body>
     <?php require_once '../components/navbar.php'; ?>
@@ -80,9 +88,8 @@ try {
                                     <tr class="text-center">
                                         <th style="width: 10%">เลขที่หนังสือ</th>
                                         <th style="width: 10%">วันที่ส่งออก</th>
-                                        <th style="width: 10%">ผู้ส่ง</th>
-                                        <th style="width: 10%">ผู้รับ</th>
-                                        <th style="width: 15%">เรื่อง</th>
+                                        <th style="width: 15%">ผู้รับ</th>
+                                        <th style="width: 20%">เรื่อง</th>
                                         <th style="width: 10%">ผู้สร้าง</th>
                                         <th style="width: 10%">วันที่สร้าง</th>
                                         <th style="width: 5%">ไฟล์</th>
@@ -96,10 +103,9 @@ try {
                                         <tr>
                                             <td class="text-center"><?php echo $document['document_number']; ?> / <?php echo $document['document_year'] + 543; ?></td>
                                             <td class="text-center"><?php echo $document['formatted_date_created']; ?></td>
-                                            <td><?php echo htmlspecialchars($document['sender']); ?></td>
-                                            <td><?php echo htmlspecialchars($document['receiver']); ?></td>
-                                            <td><?php echo htmlspecialchars($document['title']); ?></td>
-                                            <td><?php echo htmlspecialchars($document['created_by_name']); ?></td>
+                                            <td class="text-truncate-cell" data-bs-toggle="tooltip" data-bs-title="<?php echo htmlspecialchars($document['receiver']); ?>"><?php echo htmlspecialchars($document['receiver']); ?></td>
+                                            <td class="text-truncate-cell" data-bs-toggle="tooltip" data-bs-title="<?php echo htmlspecialchars($document['title']); ?>"><?php echo htmlspecialchars($document['title']); ?></td>
+                                            <td class="text-truncate-cell" data-bs-toggle="tooltip" data-bs-title="<?php echo htmlspecialchars($document['created_by_name']); ?>"><?php echo htmlspecialchars($document['created_by_name']); ?></td>
                                             <td class="text-center"><?php echo $document['formatted_created_at']; ?></td>
                                             <td class="text-center">
                                                 <?php if ($document['attachment_path']): ?>
@@ -144,9 +150,13 @@ try {
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script>
         $(document).ready(function() {
+            // Initialize tooltips
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
             $('#documentsTable').DataTable({
                 "order": [[6, "desc"]], // Sort by created_at column (index 6)
-                "pageLength": 25,
+                "pageLength": 10,
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/th.json"
                 },
