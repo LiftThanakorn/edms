@@ -25,19 +25,19 @@ function getNextDocumentNumber($pdo)
     $stmt->execute([$current_year]);
     $documentExists = $stmt->fetchColumn();
 
-    // ถ้าไม่มีเอกสารในปีปัจจุบัน ให้เริ่มที่เลข 1
+    // ถ้าไม่มีเอกสารในปีปัจจุบัน ให้เริ่มที่เลข 001
     if ($documentExists == 0) {
-        return 1;
+        return sprintf("%03d", 1);
     }
 
-    // ถ้ามีเอกสารแล้ว ให้หาเลขถัดไป
+    // ถ้ามีเอกสารแล้ว ให้หาเลขถัดไปและจัดรูปแบบให้เป็น 3 หลัก
     $stmt = $pdo->prepare("
         SELECT MAX(document_number) + 1
         FROM edms_internal_out_documents 
         WHERE document_year = ?
     ");
     $stmt->execute([$current_year]);
-    return $stmt->fetchColumn();
+    return sprintf("%03d", $stmt->fetchColumn());
 }
 
 // ฟังก์ชันจัดการไฟล์แนบ

@@ -1,5 +1,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta property="og:title" content="ระบบงานสารบรรณอิเล็กทรอนิกส์">
+<meta property="og:description" content="ระบบงานสารบรรณอิเล็กทรอนิกส์ (Electronic Document Management System) สำหรับการจัดการเอกสารอิเล็กทรอนิกส์">
+<meta property="og:image" content="https://personnel.reru.ac.th/wp-content/uploads/2025/01/og.png">
+<meta property="og:url" content="https://example.com">
+<meta property="og:type" content="website">
+
 
 <!-- ลิงก์ไปยัง Bootstrap CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">

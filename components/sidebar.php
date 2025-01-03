@@ -31,6 +31,100 @@ date_default_timezone_set('Asia/Bangkok'); // ตั้งค่าเขตเ�
     </div>
 </div>
 
+<!-- แยกส่วนแสดงกิจกรรมเป็น list group ใหม่ -->
+<div class="list-group mt-3">
+    <?php 
+    // เพิ่มฟังก์ชันแปลงเดือนเป็นภาษาไทย
+    function getThaiMonth($month) {
+        $thaimonth = array(
+            "01"=>"ม.ค.", "02"=>"ก.พ.", "03"=>"มี.ค.",
+            "04"=>"เม.ย.", "05"=>"พ.ค.", "06"=>"มิ.ย.",
+            "07"=>"ก.ค.", "08"=>"ส.ค.", "09"=>"ก.ย.",
+            "10"=>"ต.ค.", "11"=>"พ.ย.", "12"=>"ธ.ค."
+        );
+        return $thaimonth[$month];
+    }
+
+    if (isset($upcoming_events) && count($upcoming_events) > 0): 
+    ?>
+        <div class="list-group-item list-group-item-primary d-flex justify-content-between align-items-center">
+            <strong><i class="bi bi-calendar-event me-2"></i>กิจกรรมที่จะมาถึง</strong>
+            <span class="badge bg-white text-primary rounded-pill"><?php echo count($upcoming_events); ?></span>
+        </div>
+        <?php foreach ($upcoming_events as $event): 
+            $eventDate = new DateTime($event['start_date']);
+            $today = new DateTime();
+            $interval = $today->diff($eventDate);
+            $daysRemaining = $interval->days;
+            
+            // กำหนดสีและไอคอนตามความเร่งด่วน
+            $itemClass = 'list-group-item-light';
+            $textClass = 'text-primary';
+            $icon = 'bi-calendar-date';
+            
+            if ($daysRemaining <= 3) {
+                $itemClass = 'list-group-item-danger';
+                $textClass = 'text-danger';
+                $icon = 'bi-exclamation-circle-fill';
+            } elseif ($daysRemaining <= 7) {
+                $itemClass = 'list-group-item-warning';
+                $textClass = 'text-warning';
+                $icon = 'bi-exclamation-triangle';
+            }
+
+            // แปลงเดือนเป็นภาษาไทย
+            $thaiMonth = getThaiMonth($eventDate->format('m'));
+        ?>
+            <div class="list-group-item <?php echo $itemClass; ?> list-group-item-action p-2">
+                <div class="d-flex align-items-center">
+                    <div class="mini-calendar me-2 text-center">
+                        <div class="date-number small fw-bold <?php echo $textClass; ?>">
+                            <?php echo $eventDate->format('d'); ?>
+                        </div>
+                        <div class="date-month small text-muted">
+                            <?php echo $thaiMonth; ?>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-2">
+                        <div class="event-title small fw-semibold">
+                            <?php echo htmlspecialchars($event['title']); ?>
+                        </div>
+                        <div class="d-flex align-items-center small <?php echo $textClass; ?>">
+                            <i class="bi <?php echo $icon; ?> me-1"></i>
+                            <?php if ($daysRemaining > 0): ?>
+                                <span>อีก <?php echo $daysRemaining; ?> วัน</span>
+                            <?php else: ?>
+                                <span>วันนี้</span>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    <?php endif; ?>
+</div>
+
+<!-- อัปเดต style -->
+<style>
+    .mini-calendar {
+        min-width: 40px;
+    }
+    
+    .date-number {
+        line-height: 1;
+    }
+    
+    .date-month {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+    }
+    
+    .event-title {
+        line-height: 1.2;
+        margin-bottom: 2px;
+    }
+</style>
+
 <div class="list-group mt-3">
     <!-- เมนู หน้าหลัก -->
     <a href="/edms/index.php" class="list-group-item list-group-item-action <?php echo (strpos($current_page, '/edms/index.php') !== false) ? 'active' : ''; ?>">
@@ -73,6 +167,15 @@ date_default_timezone_set('Asia/Bangkok'); // ตั้งค่าเขตเ�
 
 </div>
 
+<!-- Add calendar menu item before the "อื่น ๆ" section -->
+<div class="list-group mt-3">
+    <div class="list-group-item list-group-item-secondary">
+        <strong><i class="bi bi-calendar-check me-2"></i>ปฏิทิน</strong>
+    </div>
+    <a href="/edms/calendar/index.php" class="list-group-item list-group-item-action <?php echo (strpos($current_page, '/edms/calendar/') !== false) ? 'active' : ''; ?>">
+        <i class="bi bi-calendar2-event me-2"></i>ปฏิทินบันทึกงาน
+    </a>
+</div>
 
 <div class="list-group mt-3">
     <!-- กลุ่มใหม่ สำหรับ ทะเบียนการรับ-ส่งงานกำหนดตำแหน่ง และ คำขอใบรับรอง -->

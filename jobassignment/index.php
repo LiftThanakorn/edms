@@ -121,9 +121,9 @@ try {
                                             <td class="text-center">
                                                 <?php
                                                 if ($assignment['document_type'] === 'เวียน'):
-                                                    echo "ว " . $assignment['document_number'] . "/" . ($assignment['document_year'] + 543);
+                                                    echo "ว " . sprintf("%03d", $assignment['document_number']) . "/" . ($assignment['document_year'] + 543);
                                                 else:
-                                                    echo $assignment['document_number'] . "/" . ($assignment['document_year'] + 543);
+                                                    echo sprintf("%03d", $assignment['document_number']) . "/" . ($assignment['document_year'] + 543);
                                                 endif;
                                                 ?>
                                             </td>

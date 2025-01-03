@@ -95,7 +95,7 @@ try {
                                 <tbody>
                                     <?php foreach ($requests as $request): ?>
                                         <tr>
-                                            <td class="text-center"><?php echo $request['document_number']; ?>/<?php echo $request['document_year'] + 543; ?></td>
+                                            <td class="text-center"><?php echo str_pad($request['document_number'], 3, '0', STR_PAD_LEFT); ?>/<?php echo $request['document_year'] + 543; ?></td>
                                             <td><?php echo htmlspecialchars($request['receiver']); ?></td>
                                             <td><?php echo htmlspecialchars($request['note']); ?></td>
                                             <td class="text-center"><?php echo $request['formatted_created_at']; ?></td>

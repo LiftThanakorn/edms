@@ -91,7 +91,7 @@ try {
                                     <?php foreach ($requests as $request): ?>
                                         <tr>
                                             <td class="text-center">
-                                                <?php echo $request['document_number'] . '/' . ($request['document_year'] + 543); ?>
+                                                <?php echo str_pad($request['document_number'], 3, '0', STR_PAD_LEFT) . '/' . ($request['document_year'] + 543); ?>
                                             </td>
                                             <td><?php echo htmlspecialchars($request['applicant_name']); ?></td>
                                             <td class="text-center"><?php echo $request['formatted_date_submitted']; ?></td>

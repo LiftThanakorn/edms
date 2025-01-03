@@ -51,16 +51,6 @@ $category_stats_query = "
 
 $category_stats = $pdo->query($category_stats_query)->fetchAll(PDO::FETCH_ASSOC);
 
-// Add before the HTML doctype - Query for upcoming events
-$upcoming_events_query = "
-    SELECT title, start_date, description
-    FROM events 
-    WHERE start_date >= CURRENT_DATE()
-    ORDER BY start_date ASC
-    LIMIT 5
-";
-$upcoming_events = $pdo->query($upcoming_events_query)->fetchAll(PDO::FETCH_ASSOC);
-
 // ดึงข้อมูลจากฐานข้อมูล
 $user_count = $pdo->query($user_count_query)->fetchColumn();
 $category_count = $pdo->query($category_count_query)->fetchColumn();
@@ -336,61 +326,10 @@ $certificate_count = $pdo->query($certificate_count_query)->fetchColumn();
                         </div>
                     </div>
                 </div>
-                <!-- เพิ่มส่วนแสดงกิจกรรมที่กำลังจะมาถึง หลังจากส่วนของกราฟ -->
-                <div class="row mt-4">
-                    <div class="col-12">
-                        <div class="card shadow-sm">
-                            <div class="card-header">
-                                <h5 class="mb-0">กิจกรรมที่กำลังจะมาถึง</h5>
-                            </div>
-                            <div class="card-body">
-                                <?php if (count($upcoming_events) > 0): ?>
-                                    <div class="list-group">
-                                        <?php foreach ($upcoming_events as $event): ?>
-                                            <div class="list-group-item list-group-item-action">
-                                                <div class="d-flex w-100 justify-content-between">
-                                                    <h6 class="mb-1"><?php echo htmlspecialchars($event['title']); ?></h6>
-                                                    <small class="text-muted">
-                                                        <?php 
-                                                        $date = new DateTime($event['start_date']);
-                                                        echo $date->format('d/m/Y'); 
-                                                        ?>
-                                                    </small>
-                                                </div>
-                                                <?php if (!empty($event['description'])): ?>
-                                                    <p class="mb-1 text-muted small"><?php echo htmlspecialchars($event['description']); ?></p>
-                                                <?php endif; ?>
-                                            </div>
-                                        <?php endforeach; ?>
-                                    </div>
-                                <?php else: ?>
-                                    <p class="text-muted mb-0">ไม่มีกิจกรรมที่กำลังจะมาถึง</p>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            </div>
+        </div>
+    </div>
 
-                <!-- หลังจากส่วนแสดงกิจกรรม -->
-                <div class="row mt-4">
-                    <div class="col-12">
-                        <div class="card shadow-sm">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <h5 class="mb-0">ปฏิทินบันทึกงาน</h5>
-                                <a href="/edms/calendar/index.php" class="btn btn-primary btn-sm">
-                                    <i class="bi bi-calendar2-plus"></i> จัดการปฏิทิน
-                                </a>
-                            </div>
-                            <div class="card-body">
-                                <div id="calendar" style="height: 500px;"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div><!-- ปิด div.col-md-9 -->
-        </div><!-- ปิด div.row -->
-    </div><!-- ปิด div.container -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // กราฟวงกลมแสดงสัดส่วนเอกสารทั้งหมด
@@ -532,45 +471,6 @@ $certificate_count = $pdo->query($certificate_count_query)->fetchColumn();
             }
         });
     </script>
-    <!-- เพิ่ม FullCalendar CSS & JS -->
-    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.css' rel='stylesheet' />
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.js'></script>
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/th.js'></script>
-
-    <!-- เพิ่ม Script สำหรับ Calendar -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
-                initialView: 'dayGridMonth',
-                locale: 'th',
-                height: 'auto',
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                },
-                views: {
-                    timeGridWeek: {
-                        titleFormat: { year: 'numeric', month: 'short', day: 'numeric' }
-                    },
-                    timeGridDay: {
-                        titleFormat: { year: 'numeric', month: 'short', day: 'numeric' }
-                    }
-                },
-                slotMinTime: '08:00:00',
-                slotMaxTime: '17:00:00',
-                events: '/edms/calendar/get_events.php',
-                eventClick: function(info) {
-                    window.location.href = '/edms/calendar/index.php';
-                },
-                eventDidMount: function(info) {
-                    info.el.title = info.event.extendedProps.description || info.event.title;
-                }
-            });
-            calendar.render();
-        });
-    </script>
-
 </body>
 
 </html>

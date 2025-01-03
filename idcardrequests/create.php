@@ -130,7 +130,7 @@ $current_year = date('Y') + 543;
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="form-label">เลขที่คำขอ</label>
-                                        <input type="text" class="form-control" value="<?php echo "$next_number/$current_year"; ?>" readonly>
+                                        <input type="text" class="form-control" value="<?php echo sprintf('%03d', $next_number); ?>/<?php echo $current_year; ?>" readonly>
                                     </div>
 
 

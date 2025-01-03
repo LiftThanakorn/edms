@@ -22,7 +22,7 @@ try {
         FROM edms_internal_out_documents d
         LEFT JOIN edms_users u ON d.created_by = u.user_id
         LEFT JOIN edms_work_categories c ON d.category_id = c.category_id
-        ORDER BY d.created_at DESC
+        ORDER BY d.created_at DESC, d.document_year DESC, d.document_number DESC
     ");
     $stmt->execute();
     $documents = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -101,7 +101,7 @@ try {
                                 <tbody>
                                     <?php foreach ($documents as $document): ?>
                                         <tr>
-                                            <td class="text-center"><?php echo $document['document_number']; ?> / <?php echo $document['document_year'] + 543; ?></td>
+                                            <td class="text-center"><?php echo sprintf("%03d", $document['document_number']); ?> / <?php echo $document['document_year'] + 543; ?></td>
                                             <td class="text-center"><?php echo $document['formatted_date_created']; ?></td>
                                             <td class="text-truncate-cell" data-bs-toggle="tooltip" data-bs-title="<?php echo htmlspecialchars($document['receiver']); ?>"><?php echo htmlspecialchars($document['receiver']); ?></td>
                                             <td class="text-truncate-cell" data-bs-toggle="tooltip" data-bs-title="<?php echo htmlspecialchars($document['title']); ?>"><?php echo htmlspecialchars($document['title']); ?></td>
@@ -155,7 +155,7 @@ try {
             const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 
             $('#documentsTable').DataTable({
-                "order": [[6, "desc"]], // Sort by created_at column (index 6)
+                "ordering": false, // ปิดการเรียงลำดับของ DataTables
                 "pageLength": 10,
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/th.json"

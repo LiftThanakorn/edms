@@ -142,7 +142,7 @@ $current_year = date('Y') + 543; // แปลงเป็น พ.ศ.
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="form-label">เลขที่คำขอ</label>
-                                        <input type="text" class="form-control" value="<?php echo "$next_number / $current_year"; ?>" readonly>
+                                        <input type="text" class="form-control" value="<?php echo str_pad($next_number, 3, '0', STR_PAD_LEFT) . " / " . $current_year; ?>" readonly>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">วันที่สร้างคำขอ</label>
